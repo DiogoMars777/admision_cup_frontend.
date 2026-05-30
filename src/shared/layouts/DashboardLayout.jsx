@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Users, 
@@ -18,7 +18,37 @@ import {
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : { nombre: 'Usuario', email: 'admin@cup.edu.bo' };
+  
+  const userName = user?.nombre || 'Usuario';
+  const userEmail = user?.email || 'admin@cup.edu.bo';
+  const userInitial = userName.charAt(0).toUpperCase();
+  const userFirstName = userName.split(' ')[0];
+  const userRole = user?.rol || 'Administrador';
+
+  const handleLogout = async () => {
+    // Importamos authService dinámicamente para evitar dependencias circulares complejas aquí si las hubiera, o simplemente usamos localStorage
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    
+    // Llamar al endpoint de logout (usando fetch directo para no complicar importaciones si no está a mano)
+    try {
+      await fetch('http://localhost:8000/api/logout', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Accept': 'application/json'
+        }
+      });
+    } catch(e) {}
+    
+    navigate('/');
+  };
 
   const isActive = (path) => location.pathname.includes(path);
 
@@ -118,15 +148,35 @@ export default function DashboardLayout() {
               <Bell className="h-6 w-6" />
               <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"></span>
             </button>
-            <div className="flex items-center cursor-pointer border-l pl-4 ml-2">
-              <div className="bg-primary text-white rounded-full h-8 w-8 flex items-center justify-center font-bold text-sm mr-2">
-                S
+            <div className="relative">
+              <div 
+                className="flex items-center cursor-pointer border-l pl-4 ml-2 hover:bg-gray-50 p-1 rounded"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+              >
+                <div className="bg-primary text-white rounded-full h-8 w-8 flex items-center justify-center font-bold text-sm mr-2">
+                  {userInitial}
+                </div>
+                <div className="hidden sm:block">
+                  <p className="text-sm font-semibold text-gray-700 leading-tight">{userFirstName}</p>
+                  <p className="text-[10px] text-gray-500">{userRole}</p>
+                </div>
+                <ChevronDown className="h-4 w-4 text-gray-500 ml-2" />
               </div>
-              <div className="hidden sm:block">
-                <p className="text-sm font-semibold text-gray-700 leading-tight">Super Admin</p>
-                <p className="text-xs text-gray-500">Administrador</p>
-              </div>
-              <ChevronDown className="h-4 w-4 text-gray-500 ml-2" />
+              
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-100 py-1 z-50">
+                  <div className="px-4 py-2 border-b border-gray-100">
+                    <p className="text-sm font-medium text-gray-800">{userName}</p>
+                    <p className="text-xs text-gray-500 truncate">{userEmail}</p>
+                  </div>
+                  <button 
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50"
+                  >
+                    Cerrar Sesión
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </header>

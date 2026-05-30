@@ -13,6 +13,7 @@ export const authService = {
     const response = await api.post('/login', credentials);
     if (response.data.access_token) {
       localStorage.setItem('token', response.data.access_token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
     }
     return response.data;
   },
@@ -36,4 +37,17 @@ export const authService = {
     });
     return response.data;
   },
+
+  logout: async () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        await api.post('/logout', {}, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      } catch (e) { console.error(e); }
+    }
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+  }
 };

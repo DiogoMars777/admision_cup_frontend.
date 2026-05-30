@@ -1,11 +1,37 @@
-import { Users, FileText, UserCheck, Activity } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Users, FileText, UserCheck, Activity, LogOut } from 'lucide-react';
+import { bitacoraService } from '../services/bitacoraService';
+import { postulanteService } from '../../p2-postulantes/services/postulanteService';
 
 export default function DashboardPage() {
+  const [statsData, setStatsData] = useState({ total_mes: 0, hoy: 0, usuarios_activos: 0 });
+  const [postulantesTotal, setPostulantesTotal] = useState(0);
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : {};
+  const userName = user?.nombre || 'Usuario';
+  const userFirstName = userName.split(' ')[0];
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      const bStats = await bitacoraService.getStats();
+      setStatsData(bStats);
+      
+      const pData = await postulanteService.getAll('');
+      setPostulantesTotal(pData.length);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const stats = [
-    { name: 'Usuarios Activos', value: '24', icon: Users, color: 'bg-emerald-500' },
-    { name: 'Postulantes', value: '1,240', icon: UserCheck, color: 'bg-blue-500' },
-    { name: 'Grupos Creados', value: '45', icon: FileText, color: 'bg-amber-500' },
-    { name: 'Acciones Hoy', value: '182', icon: Activity, color: 'bg-purple-500' },
+    { name: 'Usuarios Activos', value: statsData.usuarios_activos, icon: Users, color: 'bg-emerald-500' },
+    { name: 'Postulantes', value: postulantesTotal, icon: UserCheck, color: 'bg-blue-500' },
+    { name: 'Grupos (Estático)', value: '12', icon: FileText, color: 'bg-amber-500' },
+    { name: 'Acciones Hoy', value: statsData.hoy, icon: Activity, color: 'bg-purple-500' },
   ];
 
   return (
@@ -18,7 +44,7 @@ export default function DashboardPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <span className="font-medium">¡Bienvenido Administrador del Sistema!</span>
+          <span className="font-medium">¡Bienvenido al sistema, {userName}!</span>
         </div>
         <button className="text-emerald-600 hover:text-emerald-800">
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -28,7 +54,7 @@ export default function DashboardPage() {
       </div>
 
       <div>
-        <h2 className="text-2xl font-bold text-gray-800">¡Hola, Administrador! 👋</h2>
+        <h2 className="text-2xl font-bold text-gray-800">¡Hola, {userFirstName}! 👋</h2>
         <p className="text-gray-500 text-sm mt-1">Resumen de tu sistema - {new Date().toLocaleDateString('es-ES', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
       </div>
 
