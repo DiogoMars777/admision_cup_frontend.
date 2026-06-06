@@ -42,8 +42,8 @@ export const requisitoService = {
     const res = await api.post('/requisitos', data);
     return res.data;
   },
-  updateEstado: async (id, estado) => {
-    const res = await api.patch(`/requisitos/${id}/estado`, { estado });
+  updateEstado: async (id, estado, observacion = '') => {
+    const res = await api.patch(`/requisitos/${id}/estado`, { estado, observacion });
     return res.data;
   },
   delete: async (id) => {

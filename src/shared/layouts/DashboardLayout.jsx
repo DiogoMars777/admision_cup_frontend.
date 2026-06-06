@@ -3,7 +3,7 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, Users, FileClock, UserPlus, ClipboardList, 
   BookOpen, GraduationCap, UsersRound, School, Menu, Bell,
-  ChevronDown, ShieldAlert, X, ChevronRight
+  ChevronDown, ShieldAlert, X, ChevronRight, FileCheck
 } from 'lucide-react';
 
 export default function DashboardLayout() {
@@ -49,7 +49,8 @@ export default function DashboardLayout() {
     ]},
     { section: 'POSTULANTES', items: [
       { name: 'Postulantes', icon: UserPlus, path: '/p2/postulantes' },
-      { name: 'Requisitos', icon: ClipboardList, path: '/p2/requisitos' }
+      { name: 'Requisitos', icon: ClipboardList, path: '/p2/requisitos' },
+      { name: 'Documentos', icon: FileCheck, path: '/p2/documentos' }
     ]},
     { section: 'ACADÉMICO', items: [
       { name: 'Materias', icon: BookOpen, path: '/p3/materias' },
@@ -68,6 +69,7 @@ export default function DashboardLayout() {
       '/p1/bitacora': 'Bitácora',
       '/p2/postulantes': 'Postulantes',
       '/p2/requisitos': 'Requisitos',
+      '/p2/documentos': 'Documentos',
       '/p3/materias': 'Materias',
       '/p3/docentes': 'Docentes',
       '/p3/grupos': 'Grupos',

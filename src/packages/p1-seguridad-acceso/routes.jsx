@@ -15,6 +15,7 @@ import RolesPage from './pages/RolesPage';
 // P2
 import ListaPostulantesPage from '../p2-postulantes/pages/ListaPostulantesPage';
 import RequisitosPage from '../p2-postulantes/pages/RequisitosPage';
+import DocumentosPage from '../p2-postulantes/pages/DocumentosPage';
 
 // P3
 import MateriasPage from '../p3-academico/pages/MateriasPage';
@@ -40,6 +41,7 @@ export default function SeguridadAccesoRoutes() {
         {/* P2 */}
         <Route path="/p2/postulantes" element={<ListaPostulantesPage />} />
         <Route path="/p2/requisitos" element={<RequisitosPage />} />
+        <Route path="/p2/documentos" element={<DocumentosPage />} />
         {/* P3 */}
         <Route path="/p3/materias" element={<MateriasPage />} />
         <Route path="/p3/docentes" element={<DocentesPage />} />
