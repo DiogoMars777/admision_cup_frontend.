@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Search, Edit2, Trash2 } from 'lucide-react';
 import { materiaService } from '../services/materiaService';
+import { toast } from 'react-hot-toast';
 
 export default function MateriasPage() {
   const [items, setItems] = useState([]);
@@ -27,7 +28,7 @@ export default function MateriasPage() {
       if (editing) { await materiaService.update(editing.id, form); }
       else { await materiaService.create(form); }
       setShowModal(false); fetch();
-    } catch(err) { alert(err.response?.data?.message || 'Error'); }
+    } catch(err) { toast.error(err.response?.data?.message || 'Error'); }
   };
 
   const handleDelete = async (id) => {

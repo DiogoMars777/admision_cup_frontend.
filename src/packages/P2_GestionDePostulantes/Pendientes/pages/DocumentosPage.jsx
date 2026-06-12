@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { Search, Filter, ChevronRight, CheckCircle2, X, ShieldCheck, User as UserIcon, Building, Edit } from 'lucide-react';
 import { postulanteService } from '../../CU2_RegistrarPostulante/services/postulanteService';
 import { requisitoService } from '../../CU3_GestionarRequisitos/services/requisitoService';
+import { toast } from 'react-hot-toast';
 
 export default function DocumentosPage() {
   const [postulantes, setPostulantes] = useState([]);
@@ -122,7 +123,7 @@ export default function DocumentosPage() {
       setIsEditing(postulanteToSave.progress.estado !== 'Completo');
     } catch (error) {
       console.error('Error al guardar las validaciones:', error);
-      alert('Error al guardar cambios. Por favor intente nuevamente.');
+      toast.error('Error al guardar cambios. Por favor intente nuevamente.');
     } finally {
       setSaving(false);
     }

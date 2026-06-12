@@ -29,6 +29,10 @@ const DocentesPage = lazy(() => import('./P3_GestionAcademicaBase/CU7_GestionarD
 const GruposPage = lazy(() => import('./P3_GestionAcademicaBase/CU8_GestionarGrupos/pages/GruposPage'));
 const AulasPage = lazy(() => import('./P3_GestionAcademicaBase/CU9_GestionarAulas/pages/AulasPage'));
 const InicioDocentePage = lazy(() => import('./P3_GestionAcademicaBase/CU7_GestionarDocentes/pages/InicioDocentePage'));
+const DocenteMateriasPage = lazy(() => import('./P3_GestionAcademicaBase/CU7_GestionarDocentes/pages/DocenteMateriasPage'));
+const DocenteGruposPage = lazy(() => import('./P3_GestionAcademicaBase/CU7_GestionarDocentes/pages/DocenteGruposPage'));
+const DocentePerfilPage = lazy(() => import('./P3_GestionAcademicaBase/CU7_GestionarDocentes/pages/DocentePerfilPage'));
+const DocenteAsistenciaPage = lazy(() => import('./P3_GestionAcademicaBase/CU7_GestionarDocentes/pages/DocenteAsistenciaPage'));
 
 // Inteligencia Artificial
 const ReportesPage = lazy(() => import('./Reportes/pages/ReportesPage'));
@@ -72,6 +76,10 @@ export default function SeguridadAccesoRoutes() {
           <Route path="/p3/grupos" element={<GruposPage />} />
           <Route path="/p3/aulas" element={<AulasPage />} />
           <Route path="/docente/dashboard" element={<InicioDocentePage />} />
+          <Route path="/docente/materias" element={<DocenteMateriasPage />} />
+          <Route path="/docente/grupos" element={<DocenteGruposPage />} />
+          <Route path="/docente/asistencia" element={<DocenteAsistenciaPage />} />
+          <Route path="/docente/perfil" element={<DocentePerfilPage />} />
           <Route path="/postulante/dashboard" element={<InicioPostulantePage />} />
           <Route path="/reportes" element={<ReportesPage />} />
         </Route>

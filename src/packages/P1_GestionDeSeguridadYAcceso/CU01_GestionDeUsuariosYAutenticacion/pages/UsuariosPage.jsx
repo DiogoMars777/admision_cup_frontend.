@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Search, Filter } from 'lucide-react';
 import UsuarioTable from '../components/UsuarioTable';
 import { usuarioService } from '../services/usuarioService';
+import { toast } from 'react-hot-toast';
 
 export default function UsuariosPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -70,7 +71,7 @@ export default function UsuariosPage() {
       setShowModal(false);
       fetchUsuarios();
     } catch (error) {
-      alert(error.response?.data?.message || 'Error al guardar el usuario');
+      toast.error(error.response?.data?.message || 'Error al guardar el usuario');
     }
   };
 

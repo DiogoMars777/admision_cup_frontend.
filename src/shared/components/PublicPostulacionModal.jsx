@@ -3,6 +3,7 @@ import axios from 'axios';
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import { FileText, Printer, Download, X } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 export default function PublicPostulacionModal({ isOpen, onClose }) {
   const currentYear = new Date().getFullYear();
@@ -170,7 +171,7 @@ export default function PublicPostulacionModal({ isOpen, onClose }) {
       pdf.save(`postulacion_cup_${form.ci || 'nuevo'}.pdf`);
     } catch (error) {
       console.error("Error al generar PDF:", error);
-      alert("Error: " + (error.message || error));
+      toast.error("Error: " + (error.message || error));
     }
   };
 
@@ -489,13 +490,13 @@ export default function PublicPostulacionModal({ isOpen, onClose }) {
                   onClick={() => {
                     if (activeCareerIndex === 1) {
                       if (form.carrera2 === c.nombre) {
-                        alert("No puede elegir la misma carrera dos veces. Seleccione otra.");
+                        toast.error("No puede elegir la misma carrera dos veces. Seleccione otra.");
                         return;
                       }
                       setForm({...form, carrera1: c.nombre});
                     } else {
                       if (form.carrera1 === c.nombre) {
-                        alert("No puede elegir la misma carrera dos veces. Seleccione otra.");
+                        toast.error("No puede elegir la misma carrera dos veces. Seleccione otra.");
                         return;
                       }
                       setForm({...form, carrera2: c.nombre});

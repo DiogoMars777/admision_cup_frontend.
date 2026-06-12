@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, CheckCircle2, Clock, CreditCard, ShieldCheck, X, AlertCircle, RefreshCw } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import axios from 'axios';
 
 const API = 'http://localhost:8000/api';
@@ -11,6 +12,11 @@ export default function PagosPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPostulante, setSelectedPostulante] = useState(null);
   const [procesandoPago, setProcesandoPago] = useState(false);
+  
+  // Estados para simular PayPal
+  const [paypalStep, setPaypalStep] = useState(1);
+  const [paypalEmail, setPaypalEmail] = useState('');
+  const [paypalPassword, setPaypalPassword] = useState('');
 
   useEffect(() => { fetchData(); }, []);
 
@@ -30,11 +36,11 @@ export default function PagosPage() {
     setProcesandoPago(true);
     try {
       await axios.post(`${API}/postulantes/${selectedPostulante.id}/pagar`, {}, { headers: getHeaders() });
-      alert('✅ Pago procesado. El estudiante recibirá sus credenciales por correo.');
+      toast.success('Pago procesado exitosamente vía PayPal.');
       setSelectedPostulante(null);
       fetchData();
     } catch (e) {
-      alert('Error: ' + (e.response?.data?.message || 'No se pudo procesar el pago.'));
+      toast.error(e.response?.data?.message || 'No se pudo procesar el pago.');
     } finally {
       setProcesandoPago(false);
     }
@@ -178,7 +184,12 @@ export default function PagosPage() {
                       <td className="px-6 py-4 text-right">
                         {!p.tiene_pago ? (
                           <button
-                            onClick={() => setSelectedPostulante(p)}
+                            onClick={() => {
+                              setSelectedPostulante(p);
+                              setPaypalStep(1);
+                              setPaypalEmail('');
+                              setPaypalPassword('');
+                            }}
                             className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-lg transition-colors shadow-sm shadow-green-600/20"
                           >
                             <CreditCard className="w-4 h-4" />
@@ -208,71 +219,111 @@ export default function PagosPage() {
         )}
       </div>
 
-      {/* Payment Confirmation Modal */}
+      {/* PayPal Simulated Modal */}
       {selectedPostulante && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-            {/* Header */}
-            <div className="bg-slate-900 p-6 text-white">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="text-lg font-bold">Confirmar Pago de Matrícula</h3>
-                  <p className="text-slate-300 text-sm mt-1">Pasarela de Pago Simulada · UAGRM CUP</p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200">
+            {/* Header PayPal */}
+            <div className="bg-[#003087] p-5 flex justify-between items-center text-white">
+              <div className="flex items-center gap-2">
+                {/* Logo simulado */}
+                <span className="font-bold text-xl italic tracking-tight">
+                  <span className="text-white">Pay</span><span className="text-[#0079C1]">Pal</span>
+                </span>
+                <span className="text-xs bg-[#001f5a] px-2 py-0.5 rounded text-white/80 border border-white/10">Sandbox</span>
+              </div>
+              <button onClick={() => setSelectedPostulante(null)} className="text-white/70 hover:text-white transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {paypalStep === 1 ? (
+              /* Paso 1: Login de PayPal */
+              <div className="p-8 space-y-6">
+                <div className="text-center space-y-2">
+                  <h3 className="text-xl font-bold text-gray-800">Inicia sesión en PayPal</h3>
+                  <p className="text-sm text-gray-500">Paga a UAGRM CUP de forma segura</p>
                 </div>
-                <button onClick={() => setSelectedPostulante(null)} className="text-slate-400 hover:text-white">
-                  <X className="w-5 h-5" />
+
+                <div className="space-y-4">
+                  <div>
+                    <input
+                      type="email"
+                      placeholder="Correo electrónico"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0079C1] focus:border-[#0079C1] outline-none transition-all"
+                      value={paypalEmail}
+                      onChange={(e) => setPaypalEmail(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="password"
+                      placeholder="Contraseña"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0079C1] focus:border-[#0079C1] outline-none transition-all"
+                      value={paypalPassword}
+                      onChange={(e) => setPaypalPassword(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => {
+                    if(!paypalEmail || !paypalPassword) return toast.error('Ingresa credenciales de prueba');
+                    setPaypalStep(2);
+                  }}
+                  className="w-full py-3 bg-[#0079C1] hover:bg-[#005a8f] text-white font-bold rounded-full transition-colors shadow-lg shadow-[#0079C1]/30"
+                >
+                  Iniciar Sesión
+                </button>
+                <div className="text-center">
+                  <p className="text-xs text-gray-400">Esta es una pasarela simulada. Ingresa cualquier dato.</p>
+                </div>
+              </div>
+            ) : (
+              /* Paso 2: Confirmación de Pago */
+              <div className="p-8 space-y-6">
+                <div className="text-center">
+                  <p className="text-gray-500 text-sm">Hola, <span className="font-semibold text-gray-700">{paypalEmail}</span></p>
+                  <p className="text-3xl font-light text-gray-800 mt-2">$45.00 USD</p>
+                  <p className="text-xs text-gray-400 mt-1">Equivalente a Bs. 300.00</p>
+                </div>
+
+                <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Pagar a:</span>
+                    <span className="font-semibold text-gray-800">UAGRM CUP</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Postulante:</span>
+                    <span className="font-medium text-gray-800">{selectedPostulante.nombre}</span>
+                  </div>
+                  <div className="flex justify-between border-t border-gray-200 pt-3">
+                    <span className="text-gray-500">Método de pago:</span>
+                    <span className="font-medium flex items-center gap-1 text-gray-800">
+                      <CreditCard className="w-4 h-4 text-[#0079C1]"/> Saldo PayPal
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={confirmarPago}
+                  disabled={procesandoPago}
+                  className="w-full py-3 bg-[#0079C1] hover:bg-[#005a8f] text-white font-bold rounded-full flex items-center justify-center gap-2 transition-colors shadow-lg shadow-[#0079C1]/30 disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  {procesandoPago ? (
+                    <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> Procesando pago...</>
+                  ) : (
+                    'Pagar Ahora'
+                  )}
+                </button>
+                <button
+                  onClick={() => setPaypalStep(1)}
+                  className="w-full py-2 text-[#0079C1] font-semibold text-sm hover:underline"
+                >
+                  Cancelar y volver
                 </button>
               </div>
-            </div>
-
-            {/* Body */}
-            <div className="p-6 space-y-5">
-              {/* Student info */}
-              <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-2">Datos del Postulante</p>
-                <p className="font-bold text-gray-800">{selectedPostulante.nombre}</p>
-                <p className="text-sm text-gray-500">CI: {selectedPostulante.ci}</p>
-                <p className="text-sm text-gray-500">Correo: {selectedPostulante.correo || 'No registrado'}</p>
-              </div>
-
-              {/* Amount */}
-              <div className="flex justify-between items-center border-b border-gray-100 pb-4">
-                <span className="text-gray-600 font-medium">Monto de matrícula:</span>
-                <span className="text-3xl font-bold text-gray-800">Bs. 300.00</span>
-              </div>
-
-              {/* Info box */}
-              <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-sm text-blue-800">
-                <p className="font-bold mb-2">Al confirmar el pago:</p>
-                <ul className="list-disc pl-5 space-y-1">
-                  <li>Se registrará el comprobante en el sistema.</li>
-                  <li>La cuenta del postulante quedará <strong>Activa</strong>.</li>
-                  <li>Se enviará un correo con usuario y contraseña al correo registrado.</li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Footer */}
-            <div className="px-6 pb-6 flex gap-3">
-              <button
-                onClick={() => setSelectedPostulante(null)}
-                className="flex-1 py-3 border border-gray-300 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-colors"
-                disabled={procesandoPago}
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={confirmarPago}
-                disabled={procesandoPago}
-                className="flex-1 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors shadow-lg shadow-green-600/20 disabled:opacity-70"
-              >
-                {procesandoPago ? (
-                  <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Procesando...</>
-                ) : (
-                  <><ShieldCheck className="w-5 h-5" /> Confirmar Pago</>
-                )}
-              </button>
-            </div>
+            )}
           </div>
         </div>
       )}

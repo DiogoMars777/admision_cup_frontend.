@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Plus, Search, Pencil, Trash2, CalendarDays, ArrowLeft, Save, FileText, ClipboardCheck, UserCheck, Calendar } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import gestionAcademicaService from '../services/gestionAcademicaService';
+import GestionAcademicaDetailPage from './GestionAcademicaDetailPage';
 
 export default function GestionAcademicaPage() {
   const [gestiones, setGestiones] = useState([]);
@@ -67,15 +69,15 @@ export default function GestionAcademicaPage() {
 
   const handleSaveEvaluacion = async (nombre_eva, fecha) => {
     if (!fecha) {
-      alert("Por favor ingrese una fecha.");
+      toast.error("Por favor ingrese una fecha.");
       return;
     }
     try {
       await gestionAcademicaService.updateEvaluacion(selectedGestion.id, { nombre_eva, fecha });
-      alert("Fecha actualizada correctamente.");
+      toast.success("Fecha actualizada correctamente.");
       fetchEvaluaciones(selectedGestion.id);
     } catch (error) {
-      alert(error.response?.data?.message || 'Error al guardar');
+      toast.error(error.response?.data?.message || 'Error al guardar');
     }
   };
 
@@ -122,7 +124,7 @@ export default function GestionAcademicaPage() {
         await gestionAcademicaService.delete(id);
         loadData();
       } catch (err) {
-        alert(err.response?.data?.message || 'Error al eliminar la gestión');
+        toast.error(err.response?.data?.message || 'Error al eliminar la gestión');
       }
     }
   };
@@ -245,76 +247,10 @@ export default function GestionAcademicaPage() {
         </div>
       </div>
       ) : (
-        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-          <button 
-            onClick={() => setSelectedGestion(null)}
-            className="inline-flex items-center text-sm font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-4 py-2 rounded-lg transition-colors mb-2"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" /> Volver a la lista
-          </button>
-          
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-2">{selectedGestion.nombre}</h3>
-            <div className="flex gap-4 text-sm text-gray-500 mb-6">
-              <span className="flex items-center"><CalendarDays className="h-4 w-4 mr-1"/> Año: {selectedGestion.año}</span>
-              <span className="flex items-center"><FileText className="h-4 w-4 mr-1"/> Del: {selectedGestion.fecha_ini} Al: {selectedGestion.fecha_fin}</span>
-              <span className={`px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${selectedGestion.estado === 'Activo' ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-800'}`}>
-                {selectedGestion.estado || 'Inactivo'}
-              </span>
-            </div>
-
-            <div>
-              <h4 className="text-lg font-semibold text-gray-800 mb-1">Evaluaciones definidas</h4>
-              <p className="text-sm text-gray-500 mb-4">Configura las fechas de las 3 evaluaciones de la gestión.</p>
-
-              {loadingEvals ? (
-                <div className="p-8 text-center text-gray-500">Cargando evaluaciones...</div>
-              ) : (
-                <div className="space-y-3">
-                  {evaluaciones.map((eva, idx) => {
-                    return (
-                      <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-shadow gap-4">
-                        <div className="flex items-center gap-4">
-                          <div className="p-3 rounded-xl bg-indigo-50">
-                            <FileText className="w-6 h-6 text-indigo-600" />
-                          </div>
-                          <div>
-                            <h5 className="font-bold text-gray-800 text-lg">{eva.nombre_eva}</h5>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-end gap-3 shrink-0">
-                          <div className="flex flex-col">
-                            <label className="text-xs font-semibold text-gray-500 mb-1">Fecha programada</label>
-                            <div className="relative">
-                              <input 
-                                type="date"
-                                className="pl-3 pr-10 py-2 border border-gray-200 rounded-lg text-sm focus:ring-primary focus:border-primary w-40"
-                                value={eva.fecha || ''}
-                                onChange={(e) => {
-                                  const newEvals = [...evaluaciones];
-                                  newEvals[idx].fecha = e.target.value;
-                                  setEvaluaciones(newEvals);
-                                }}
-                              />
-                              <Calendar className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => handleSaveEvaluacion(eva.nombre_eva, eva.fecha)}
-                            className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                          >
-                            Guardar
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+        <GestionAcademicaDetailPage 
+          gestion={selectedGestion} 
+          onBack={() => setSelectedGestion(null)} 
+        />
       )}
 
       {showModal && (

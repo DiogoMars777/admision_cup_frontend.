@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Search, Filter, Edit, Trash2, Eye, Info, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { postulanteService } from '../services/postulanteService';
+import { toast } from 'react-hot-toast';
 
 export default function ListaPostulantesPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -92,7 +93,7 @@ export default function ListaPostulantesPage() {
       setShowModal(false);
       fetchPostulantes();
     } catch (error) {
-      alert(error.response?.data?.message || "Error al procesar la solicitud");
+      toast.error(error.response?.data?.message || "Error al procesar la solicitud");
     }
   };
 

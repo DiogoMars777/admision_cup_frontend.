@@ -54,11 +54,8 @@ export default function DashboardLayout() {
     { section: 'DOCENTE', items: [
       { name: 'Inicio', icon: LayoutDashboard, path: '/docente/dashboard' },
       { name: 'Mis Grupos', icon: UsersRound, path: '/docente/grupos' },
-      { name: 'Materias', icon: BookOpen, path: '/p3/materias' },
-      { name: 'Registrar Notas', icon: ClipboardList, path: '/docente/notas' },
+      { name: 'Materias', icon: BookOpen, path: '/docente/materias' },
       { name: 'Asistencia', icon: FileCheck, path: '/docente/asistencia' },
-      { name: 'Horarios', icon: FileClock, path: '/docente/horarios' },
-      { name: 'Reportes', icon: ShieldAlert, path: '/docente/reportes' },
       { name: 'Perfil', icon: UserPlus, path: '/docente/perfil' }
     ]}
   ] : userRole === 'Postulante' ? [
@@ -116,8 +113,11 @@ export default function DashboardLayout() {
       '/p3/docentes': 'Docentes',
       '/p3/grupos': 'Grupos',
       '/p3/aulas': 'Aulas',
-      '/reportes': 'Reportes Inteligentes',
       '/docente/dashboard': 'Inicio',
+      '/docente/grupos': 'Mis Grupos',
+      '/docente/materias': 'Materias Habilitadas',
+      '/docente/asistencia': 'Control de Asistencia',
+      '/docente/perfil': 'Mi Perfil',
       '/postulante/dashboard': 'Inicio',
     };
     return pathMap[location.pathname] || 'Panel';

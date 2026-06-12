@@ -51,7 +51,7 @@ export default function ReportesPage() {
       recognitionRef.current.onerror = (event) => {
         console.error('Error de micrófono:', event.error);
         if (event.error !== 'no-speech') {
-          alert('Error con el micrófono: ' + event.error);
+          toast.error('Error con el micrófono: ' + event.error);
         }
         setIsListening(false);
       };
@@ -71,7 +71,7 @@ export default function ReportesPage() {
 
   const startListening = (e) => {
     e.preventDefault();
-    if (!recognitionRef.current) return alert("Tu navegador no soporta reconocimiento de voz.");
+    if (!recognitionRef.current) return toast.error("Tu navegador no soporta reconocimiento de voz.");
     if (isLoading) return;
     shouldSendRef.current = false;
     setPrompt('');
@@ -109,7 +109,7 @@ export default function ReportesPage() {
       promptRef.current = '';
     } catch (error) {
       console.error('Error generating report:', error);
-      alert('Hubo un error al generar el reporte. ' + (error.response?.data?.message || ''));
+      toast.error('Hubo un error al generar el reporte. ' + (error.response?.data?.message || ''));
     } finally {
       setIsLoading(false);
     }
@@ -135,7 +135,7 @@ export default function ReportesPage() {
   };
 
   const exportToPdf = (action = 'download') => {
-    if (reportBlocks.length === 0) return alert('No hay datos para exportar.');
+    if (reportBlocks.length === 0) return toast.error('No hay datos para exportar.');
     
     const doc = new jsPDF();
     let yPos = 20;
@@ -181,7 +181,7 @@ export default function ReportesPage() {
   };
 
   const exportToExcel = (format = 'xlsx') => {
-    if (reportBlocks.length === 0) return alert('No hay datos para exportar.');
+    if (reportBlocks.length === 0) return toast.error('No hay datos para exportar.');
     
     if (format === 'csv') {
       const wb = XLSX.utils.book_new();
@@ -384,3 +384,4 @@ export default function ReportesPage() {
 
 // Needed imports that were missed at top
 import { PieChart } from 'lucide-react';
+import { toast } from 'react-hot-toast';

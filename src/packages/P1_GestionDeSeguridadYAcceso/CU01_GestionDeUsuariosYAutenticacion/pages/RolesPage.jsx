@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Search, Edit2, Trash2 } from 'lucide-react';
 import { rolService } from '../services/rolService';
+import { toast } from 'react-hot-toast';
 
 export default function RolesPage() {
   const [items, setItems] = useState([]);
@@ -50,7 +51,7 @@ export default function RolesPage() {
       setShowModal(false);
       fetchData();
     } catch (error) {
-      alert(error.response?.data?.message || 'Error al guardar el rol');
+      toast.error(error.response?.data?.message || 'Error al guardar el rol');
     }
   };
 
@@ -60,7 +61,7 @@ export default function RolesPage() {
         await rolService.delete(id);
         fetchData();
       } catch (error) {
-        alert(error.response?.data?.message || 'Error al eliminar');
+        toast.error(error.response?.data?.message || 'Error al eliminar');
       }
     }
   };

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Search, Edit2, Trash2 } from 'lucide-react';
 import { grupoService } from '../services/grupoService';
+import { toast } from 'react-hot-toast';
 
 export default function GruposPage() {
   const [items, setItems] = useState([]);
@@ -38,7 +39,7 @@ export default function GruposPage() {
       if (editing) await grupoService.update(editing.id, form);
       else await grupoService.create(form);
       setShowModal(false); fetchData();
-    } catch(err) { alert(err.response?.data?.message || 'Error'); }
+    } catch(err) { toast.error(err.response?.data?.message || 'Error'); }
   };
 
   const handleDelete = async (id) => {

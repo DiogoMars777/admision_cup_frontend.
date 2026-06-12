@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Search, Edit2, Trash2 } from 'lucide-react';
 import { aulaService } from '../services/aulaService';
+import { toast } from 'react-hot-toast';
 
 export default function AulasPage() {
   const [items, setItems] = useState([]);
@@ -27,7 +28,7 @@ export default function AulasPage() {
       if (editing) await aulaService.update(editing.id, form);
       else await aulaService.create(form);
       setShowModal(false); fetchData();
-    } catch(err) { alert(err.response?.data?.message || 'Error'); }
+    } catch(err) { toast.error(err.response?.data?.message || 'Error'); }
   };
 
   const handleDelete = async (id) => {

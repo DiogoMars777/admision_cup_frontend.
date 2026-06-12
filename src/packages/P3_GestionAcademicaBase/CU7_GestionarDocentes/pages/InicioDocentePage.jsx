@@ -1,42 +1,58 @@
-import { useState } from 'react';
-import { Users, UserCheck, UserX, Calendar, Clock, BookOpen, MapPin } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Users, UserCheck, UserX, Calendar, Clock, BookOpen, MapPin, ChevronRight, FileText, UsersRound } from 'lucide-react';
+import { docentePortalService } from '../services/docentePortalService';
+import toast from 'react-hot-toast';
 
 export default function InicioDocentePage() {
-  const [selectedGroup, setSelectedGroup] = useState('Grupo A');
+  const [selectedGroup, setSelectedGroup] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [dashboardData, setDashboardData] = useState(null);
+  const [estudiantes, setEstudiantes] = useState([]);
+  const [loadingEstudiantes, setLoadingEstudiantes] = useState(false);
 
-  // Mock Data
-  const stats = {
-    total: 83,
-    aprobados: 72,
-    aprobadosPerc: 86.7,
-    reprobados: 11,
-    reprobadosPerc: 13.3,
-    asistencia: 91,
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : { id: 1, nombre: 'Docente' };
+
+  useEffect(() => {
+    loadDashboard();
+  }, []);
+
+  const loadDashboard = async () => {
+    try {
+      setLoading(true);
+      const data = await docentePortalService.getDashboardData(user.id);
+      setDashboardData(data);
+    } catch (e) {
+      toast.error('Error al cargar datos del portal docente');
+    } finally {
+      setLoading(false);
+    }
   };
-
-  const grupos = [
-    { id: 'Grupo A', nombre: 'Grupo A - Matemáticas', estudiantes: 28, horario: 'Lun-Mier 08:00-10:00', aula: 'Aula 101' },
-    { id: 'Grupo B', nombre: 'Grupo B - Física', estudiantes: 25, horario: 'Mar-Jue 10:00-12:00', aula: 'Aula 203' },
-    { id: 'Grupo C', nombre: 'Grupo C - Química', estudiantes: 30, horario: 'Vie 14:00-18:00', aula: 'Lab 1' },
-  ];
-
-  const estudiantes = [
-    { id: 1, nombre: 'Juan Pérez', nota: 85, asistencia: 95, estado: 'Aprobado' },
-    { id: 2, nombre: 'María González', nota: 78, asistencia: 90, estado: 'Aprobado' },
-    { id: 3, nombre: 'Carlos Ruiz', nota: 92, asistencia: 100, estado: 'Aprobado' },
-    { id: 4, nombre: 'Ana Torres', nota: 65, asistencia: 85, estado: 'Pendiente' },
-    { id: 5, nombre: 'Luis Morales', nota: 45, asistencia: 70, estado: 'Reprobado' },
-  ];
 
   const getStatusBadge = (estado) => {
     switch (estado) {
       case 'Aprobado':
-        return <span className="bg-emerald-500 text-white px-3 py-1 rounded-md text-xs font-bold">Aprobado</span>;
+        return <span className="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-bold border border-emerald-200 shadow-sm">Aprobado</span>;
       case 'Reprobado':
-        return <span className="bg-red-500 text-white px-3 py-1 rounded-md text-xs font-bold">Reprobado</span>;
+        return <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold border border-red-200 shadow-sm">Reprobado</span>;
       default:
-        return <span className="text-gray-400 text-xs font-medium">--</span>;
+        return <span className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-xs font-bold border border-amber-200 shadow-sm">Cursando</span>;
     }
+  };
+
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center h-96">
+      <div className="w-10 h-10 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+      <p className="mt-4 text-gray-500 font-medium">Cargando tu portal docente...</p>
+    </div>
+  );
+
+  if (!dashboardData) return null;
+
+  const { stats, grupos, horario_semanal } = dashboardData;
+  
+  const getHorarioDeDia = (dia) => {
+    return horario_semanal.filter(h => h.dia === dia);
   };
 
   return (
@@ -100,132 +116,95 @@ export default function InicioDocentePage() {
         </div>
       </div>
 
-      {/* Mis Grupos Asignados */}
+      {/* Mis Grupos Asignados (Resumen) */}
       <div>
-        <h3 className="text-lg font-bold text-gray-800 mb-4">Mis Grupos Asignados</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {grupos.map((grupo) => (
-            <div 
-              key={grupo.id} 
-              onClick={() => setSelectedGroup(grupo.id)}
-              className={`bg-white rounded-2xl p-6 border-2 transition-all cursor-pointer ${selectedGroup === grupo.id ? 'border-blue-800 shadow-md transform -translate-y-1' : 'border-transparent shadow-sm hover:border-blue-100'}`}
-            >
-              <h4 className="text-lg font-bold text-gray-800 mb-4">{grupo.nombre}</h4>
-              <div className="space-y-3">
-                <div className="flex items-center text-gray-500 text-sm font-medium">
-                  <Users className="w-4 h-4 mr-3 text-gray-400" />
-                  {grupo.estudiantes} estudiantes
+        <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+          <BookOpen className="w-5 h-5 text-blue-600"/>
+          Mis Grupos Asignados
+        </h3>
+        
+        {grupos.length === 0 ? (
+          <div className="bg-blue-50 border border-blue-100 rounded-xl p-8 text-center text-blue-800 flex flex-col items-center">
+            <FileText className="w-12 h-12 text-blue-300 mb-3"/>
+            <p className="font-semibold text-lg">Aún no tienes grupos asignados</p>
+            <p className="text-sm mt-1">El área de Gestión Académica te asignará tus materias próximamente.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {grupos.map((grupo) => (
+              <div 
+                key={grupo.id} 
+                className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm transition-all hover:shadow-md hover:border-blue-200"
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <h4 className="text-lg font-bold text-gray-800">
+                    {grupo.nombre}
+                  </h4>
                 </div>
-                <div className="flex items-center text-gray-500 text-sm font-medium">
-                  <Clock className="w-4 h-4 mr-3 text-gray-400" />
-                  {grupo.horario}
-                </div>
-                <div className="flex items-center text-gray-500 text-sm font-medium">
-                  <MapPin className="w-4 h-4 mr-3 text-gray-400" />
-                  {grupo.aula}
+                
+                <div className="space-y-4">
+                  <div className="flex items-center text-sm font-medium bg-gray-50 rounded-lg p-3">
+                    <Users className="w-5 h-5 mr-3 text-gray-400" />
+                    <span className="text-gray-700">{grupo.estudiantes} Estudiantes inscritos</span>
+                  </div>
+                  <div className="flex items-center text-sm font-medium bg-gray-50 rounded-lg p-3 whitespace-pre-wrap">
+                    <Clock className="w-5 h-5 mr-3 shrink-0 text-gray-400" />
+                    <span className="text-gray-700 leading-tight">{grupo.horario}</span>
+                  </div>
+                  <div className="flex items-center text-sm font-medium bg-gray-50 rounded-lg p-3">
+                    <MapPin className="w-5 h-5 mr-3 text-gray-400" />
+                    <span className="text-gray-700">{grupo.aula}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Estudiantes Table */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="p-6 border-b border-gray-50">
-          <h3 className="text-lg font-bold text-gray-800">Estudiantes - {selectedGroup}</h3>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-white text-gray-500 text-sm border-b border-gray-100">
-                <th className="px-6 py-4 font-semibold">Estudiante</th>
-                <th className="px-6 py-4 font-semibold">Nota Final</th>
-                <th className="px-6 py-4 font-semibold">Asistencia</th>
-                <th className="px-6 py-4 font-semibold">Estado</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {estudiantes.map((est) => (
-                <tr key={est.id} className="hover:bg-gray-50/50 transition-colors">
-                  <td className="px-6 py-4 font-medium text-gray-800">{est.nombre}</td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <span className="font-bold text-gray-700 w-6">{est.nota}</span>
-                      <div className="w-32 h-2.5 bg-blue-100 rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-blue-800 rounded-full" 
-                          style={{ width: `${est.nota}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 font-medium text-gray-600">{est.asistencia}%</td>
-                  <td className="px-6 py-4">
-                    {getStatusBadge(est.estado)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Horario Semanal */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-lg font-bold text-gray-800 mb-6">Horario Semanal</h3>
-        <div className="grid grid-cols-5 gap-4">
-          {/* Lunes */}
-          <div>
-            <div className="bg-gray-50 text-center py-2 rounded-t-lg font-bold text-sm text-gray-700 mb-3 border-b-2 border-gray-200">
-              Lunes
-            </div>
-            <div className="bg-gray-100 p-4 rounded-xl border border-gray-200 mb-3 hover:bg-gray-200 transition-colors cursor-pointer">
-              <p className="font-bold text-gray-800 text-sm">08:00-10:00</p>
-              <p className="text-xs text-gray-500 mt-1">Grupo A</p>
-            </div>
+      <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+        <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+          <Calendar className="w-5 h-5 text-blue-600"/>
+          Horario Semanal
+        </h3>
+        {horario_semanal.length === 0 ? (
+          <p className="text-gray-500 text-center py-4">No tienes horarios asignados para esta semana.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            {['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'].map(dia => {
+              const clasesDelDia = getHorarioDeDia(dia);
+              return (
+                <div key={dia}>
+                  <div className={`text-center py-2 rounded-t-lg font-bold text-sm text-gray-700 mb-3 border-b-2 ${clasesDelDia.length > 0 ? 'bg-blue-50 border-blue-200 text-blue-800' : 'bg-gray-50 border-gray-200'}`}>
+                    {dia}
+                  </div>
+                  {clasesDelDia.length === 0 ? (
+                    <div className="text-center p-3 text-xs text-gray-400 bg-gray-50/50 rounded-xl border border-dashed border-gray-200">
+                      Sin clases
+                    </div>
+                  ) : (
+                    clasesDelDia.map((clase, idx) => (
+                      <div key={idx} className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-xl border border-gray-200 mb-3 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer relative overflow-hidden group">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                        <p className="font-bold text-gray-800 text-sm mb-1 text-center bg-white border border-gray-100 rounded py-1 shadow-sm">{clase.hora}</p>
+                        <p className="text-sm font-bold text-blue-700 mt-2">{clase.materia}</p>
+                        <div className="flex items-center gap-1 text-xs text-gray-500 font-medium mt-1">
+                          <Users className="w-3 h-3 text-gray-400"/>
+                          {clase.grupo}
+                        </div>
+                        <div className="flex items-center gap-1 text-xs text-gray-500 font-medium mt-1">
+                          <MapPin className="w-3 h-3 text-gray-400"/>
+                          Aula {clase.aula}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              );
+            })}
           </div>
-          {/* Martes */}
-          <div>
-            <div className="bg-gray-50 text-center py-2 rounded-t-lg font-bold text-sm text-gray-700 mb-3 border-b-2 border-gray-200">
-              Martes
-            </div>
-            <div className="bg-gray-100 p-4 rounded-xl border border-gray-200 mb-3 hover:bg-gray-200 transition-colors cursor-pointer">
-              <p className="font-bold text-gray-800 text-sm">10:00-12:00</p>
-              <p className="text-xs text-gray-500 mt-1">Grupo B</p>
-            </div>
-          </div>
-          {/* Miércoles */}
-          <div>
-            <div className="bg-gray-50 text-center py-2 rounded-t-lg font-bold text-sm text-gray-700 mb-3 border-b-2 border-gray-200">
-              Miércoles
-            </div>
-            <div className="bg-gray-100 p-4 rounded-xl border border-gray-200 mb-3 hover:bg-gray-200 transition-colors cursor-pointer">
-              <p className="font-bold text-gray-800 text-sm">08:00-10:00</p>
-              <p className="text-xs text-gray-500 mt-1">Grupo A</p>
-            </div>
-          </div>
-          {/* Jueves */}
-          <div>
-            <div className="bg-gray-50 text-center py-2 rounded-t-lg font-bold text-sm text-gray-700 mb-3 border-b-2 border-gray-200">
-              Jueves
-            </div>
-            <div className="bg-gray-100 p-4 rounded-xl border border-gray-200 mb-3 hover:bg-gray-200 transition-colors cursor-pointer">
-              <p className="font-bold text-gray-800 text-sm">10:00-12:00</p>
-              <p className="text-xs text-gray-500 mt-1">Grupo B</p>
-            </div>
-          </div>
-          {/* Viernes */}
-          <div>
-            <div className="bg-gray-50 text-center py-2 rounded-t-lg font-bold text-sm text-gray-700 mb-3 border-b-2 border-gray-200">
-              Viernes
-            </div>
-            <div className="bg-gray-100 p-4 rounded-xl border border-gray-200 mb-3 hover:bg-gray-200 transition-colors cursor-pointer">
-              <p className="font-bold text-gray-800 text-sm">14:00-18:00</p>
-              <p className="text-xs text-gray-500 mt-1">Grupo C</p>
-            </div>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

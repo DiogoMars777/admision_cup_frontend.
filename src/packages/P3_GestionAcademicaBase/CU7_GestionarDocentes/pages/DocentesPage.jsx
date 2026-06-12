@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Search, Edit2, Trash2 } from 'lucide-react';
 import { docenteService } from '../services/docenteService';
+import { toast } from 'react-hot-toast';
 
 export default function DocentesPage() {
   const [items, setItems] = useState([]);
@@ -27,7 +28,7 @@ export default function DocentesPage() {
       if (editing) { await docenteService.update(editing.id, form); }
       else { await docenteService.create(form); }
       setShowModal(false); fetchData();
-    } catch(err) { alert(err.response?.data?.message || 'Error'); }
+    } catch(err) { toast.error(err.response?.data?.message || 'Error'); }
   };
 
   const handleDelete = async (id) => {

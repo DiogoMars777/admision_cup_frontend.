@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Search, Pencil, Trash2, BookOpen } from 'lucide-react';
 import carreraService from '../services/carreraService';
+import { toast } from 'react-hot-toast';
 
 export default function CarrerasPage() {
   const [carreras, setCarreras] = useState([]);
@@ -72,7 +73,7 @@ export default function CarrerasPage() {
         await carreraService.delete(id);
         fetchCarreras();
       } catch (err) {
-        alert(err.response?.data?.message || 'Error al eliminar la carrera');
+        toast.error(err.response?.data?.message || 'Error al eliminar la carrera');
       }
     }
   };

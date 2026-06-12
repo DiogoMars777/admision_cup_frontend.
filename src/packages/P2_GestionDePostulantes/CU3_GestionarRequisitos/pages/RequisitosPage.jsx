@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2, BookOpen, User as UserIcon, CheckCircle2, AlertCircle, Save, Filter, ChevronRight } from 'lucide-react';
 import { requisitoService } from '../services/requisitoService';
 import { materiaService } from '../../../P3_GestionAcademicaBase/CU6_GestionarMaterias/services/materiaService';
+import { toast } from 'react-hot-toast';
 
 export default function RequisitosPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -101,11 +102,11 @@ export default function RequisitosPage() {
         }));
 
       await requisitoService.syncMateriaRequisitos(selectedMateria, asignaciones);
-      alert('Asignación guardada exitosamente');
+      toast.success('Asignación guardada exitosamente');
       fetchMateriaRequisitos(selectedMateria); // refresh
     } catch (error) {
       console.error(error);
-      alert('Error al guardar asignación');
+      toast.error('Error al guardar asignación');
     } finally {
       setSavingAsignacion(false);
     }
@@ -131,7 +132,7 @@ export default function RequisitosPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.nombre || !form.tipo_requisito) {
-      alert("Nombre y Tipo son obligatorios");
+      toast.error("Nombre y Tipo son obligatorios");
       return;
     }
     try {
@@ -144,7 +145,7 @@ export default function RequisitosPage() {
       fetchData();
       if (selectedMateria) fetchMateriaRequisitos(selectedMateria);
     } catch (error) {
-      alert(error.response?.data?.message || "Error al procesar el requisito");
+      toast.error(error.response?.data?.message || "Error al procesar el requisito");
     }
   };
 
@@ -156,7 +157,7 @@ export default function RequisitosPage() {
         if (selectedMateria) fetchMateriaRequisitos(selectedMateria);
       } catch (error) {
         console.error("Error al eliminar", error);
-        alert("No se pudo eliminar el requisito. Es posible que esté en uso.");
+        toast.error("No se pudo eliminar el requisito. Es posible que esté en uso.");
       }
     }
   };

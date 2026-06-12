@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Plus, Search, Filter, Eye, ChevronRight, ArrowLeft, BookOpen, CheckCircle, FileText, Upload, UserPlus, Info, Pencil, Lock, ShieldCheck, CheckCircle2, Trash2 } from 'lucide-react';
 import { aspiranteDocenteService } from '../services/aspiranteDocenteService';
 import { materiaService } from '../../../P3_GestionAcademicaBase/CU6_GestionarMaterias/services/materiaService';
+import { toast } from 'react-hot-toast';
 
 export default function PostulanteDocentePage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -112,7 +113,7 @@ export default function PostulanteDocentePage() {
       setEditMode(false);
     } catch (error) {
       console.error("Error saving reqs", error);
-      alert('Error al guardar validaciones');
+      toast.error('Error al guardar validaciones');
     } finally {
       setSaving(false);
     }
@@ -131,7 +132,7 @@ export default function PostulanteDocentePage() {
       await loadMaterias(selectedAspirante.id);
       fetchAspirantes();
     } catch (error) {
-      alert(error.response?.data?.message || 'Error al postular');
+      toast.error(error.response?.data?.message || 'Error al postular');
     }
   };
 
@@ -148,7 +149,7 @@ export default function PostulanteDocentePage() {
       setIsEditingAspirante(false);
       fetchAspirantes();
     } catch (error) {
-      alert(error.response?.data?.message || (isEditingAspirante ? 'Error al actualizar' : 'Error al crear'));
+      toast.error(error.response?.data?.message || (isEditingAspirante ? 'Error al actualizar' : 'Error al crear'));
     }
   };
 
@@ -175,7 +176,7 @@ export default function PostulanteDocentePage() {
         await aspiranteDocenteService.delete(id);
         fetchAspirantes();
       } catch (error) {
-        alert(error.response?.data?.message || 'Error al eliminar');
+        toast.error(error.response?.data?.message || 'Error al eliminar');
       }
     }
   };
@@ -184,11 +185,11 @@ export default function PostulanteDocentePage() {
     if(window.confirm('¿Desea aprobar y convertir a este aspirante en Docente oficial?\n\nSe realizará lo siguiente:\n• Se verificarán los requisitos automáticamente\n• Se creará un usuario con contraseña = su carnet de identidad\n• Se asignará el rol Docente\n• Se le enviará un correo con sus credenciales y materias')) {
       try {
         const response = await aspiranteDocenteService.convertirADocente(selectedAspirante.id);
-        alert(`¡Conversión exitosa!\n\n• ${response.materias_aprobadas} materia(s) aprobadas\n• Usuario: ${response.email}\n• Contraseña: Su carnet (CI)\n• Correo enviado con credenciales`);
+        toast.success(`¡Conversión exitosa!\n\n• ${response.materias_aprobadas} materia(s) aprobadas\n• Usuario: ${response.email}\n• Contraseña: Su carnet (CI)\n• Correo enviado con credenciales`);
         setSelectedAspirante(null);
         fetchAspirantes();
       } catch (error) {
-        alert(error.response?.data?.message || 'Error al convertir');
+        toast.error(error.response?.data?.message || 'Error al convertir');
       }
     }
   };

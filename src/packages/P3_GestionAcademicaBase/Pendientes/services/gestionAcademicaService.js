@@ -10,8 +10,36 @@ const gestionAcademicaService = {
   },
 
   getCups: async () => {
-    const response = await api.get('/gestiones-academicas/cups');
-    return response.data;
+    const res = await api.get('/gestiones-academicas/cups');
+    return res.data;
+  },
+
+  // Endpoints para generación de grupos
+  getGruposResumen: async (id) => {
+    const res = await api.get(`/gestiones-academicas/${id}/grupos/resumen`);
+    return res.data;
+  },
+  simularGrupos: async (id) => {
+    const res = await api.post(`/gestiones-academicas/${id}/grupos/simular`);
+    return res.data;
+  },
+  generarGrupos: async (id) => {
+    const res = await api.post(`/gestiones-academicas/${id}/grupos/generar`);
+    return res.data;
+  },
+
+  // Endpoints para horarios
+  getHorariosResumen: async (id) => {
+    const res = await api.get(`/gestiones-academicas/${id}/horarios/resumen`);
+    return res.data;
+  },
+  simularHorarios: async (id) => {
+    const res = await api.post(`/gestiones-academicas/${id}/horarios/simular`);
+    return res.data;
+  },
+  generarHorarios: async (id) => {
+    const res = await api.post(`/gestiones-academicas/${id}/horarios/generar`);
+    return res.data;
   },
 
   create: async (data) => {

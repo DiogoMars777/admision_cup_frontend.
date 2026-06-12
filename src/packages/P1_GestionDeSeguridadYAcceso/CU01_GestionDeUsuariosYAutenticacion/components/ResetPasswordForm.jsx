@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { authService } from '../services/authService';
 import { Eye, EyeOff, Lock, ShieldCheck, CheckCircle2, Circle, Save, AlertCircle } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 export default function ResetPasswordForm() {
   const { register, handleSubmit, formState: { errors, isSubmitting }, watch } = useForm();
@@ -19,7 +20,7 @@ export default function ResetPasswordForm() {
     setErrorMsg('');
     try {
       await authService.resetPassword({ ...data, email, code });
-      alert('Contraseña actualizada correctamente');
+      toast.success('Contraseña actualizada correctamente');
       navigate('/');
     } catch (error) {
       console.error(error);
