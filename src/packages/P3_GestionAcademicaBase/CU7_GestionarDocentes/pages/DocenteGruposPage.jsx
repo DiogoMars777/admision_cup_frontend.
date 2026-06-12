@@ -38,14 +38,16 @@ export default function DocenteGruposPage() {
     setSelectedGroup(groupId);
     try {
       setLoadingEstudiantes(true);
-      const ests = await docentePortalService.getEstudiantesPorGrupo(groupId);
-      setEstudiantes(ests);
+      const res = await docentePortalService.getEstudiantesPorGrupo(groupId);
+      setEstudiantes(res.estudiantes || []);
     } catch (e) {
       toast.error('Error al cargar estudiantes');
     } finally {
       setLoadingEstudiantes(false);
     }
   };
+
+
 
   const getStatusBadge = (estado) => {
     switch (estado) {
@@ -146,7 +148,6 @@ export default function DocenteGruposPage() {
                 <th className="px-6 py-4 font-bold uppercase tracking-wider text-xs text-center">Nota 3</th>
                 <th className="px-6 py-4 font-bold uppercase tracking-wider text-xs text-center">Promedio Final</th>
                 <th className="px-6 py-4 font-bold uppercase tracking-wider text-xs text-center">Asistencia</th>
-                <th className="px-6 py-4 font-bold uppercase tracking-wider text-xs text-center">Estado</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -169,20 +170,17 @@ export default function DocenteGruposPage() {
                     <td className="px-6 py-4 text-center font-medium text-gray-600">{est.nota3}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-center gap-2">
-                        <span className={`font-bold w-7 text-center ${est.nota >= 51 ? 'text-emerald-600' : 'text-red-600'}`}>{est.nota}</span>
+                        <span className={`font-bold w-7 text-center ${est.nota >= 60 ? 'text-emerald-600' : 'text-red-600'}`}>{est.nota}</span>
                         <div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden shadow-inner hidden md:block">
                           <div 
-                            className={`h-full rounded-full transition-all duration-1000 ${est.nota >= 51 ? 'bg-emerald-500' : 'bg-red-500'}`} 
-                            style={{ width: `${est.nota}%` }}
+                            className={`h-full rounded-full transition-all duration-1000 ${est.nota >= 60 ? 'bg-emerald-500' : 'bg-red-500'}`} 
+                            style={{ width: `${Math.min(100, Math.max(0, est.nota))}%` }}
                           ></div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-center">
                       <span className="font-medium text-gray-600 bg-gray-50 px-2 py-1 rounded-md border border-gray-200">{est.asistencia}%</span>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      {getStatusBadge(est.estado)}
                     </td>
                   </tr>
                 ))

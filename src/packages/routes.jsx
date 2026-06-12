@@ -20,6 +20,8 @@ const RequisitosPage = lazy(() => import('./P2_GestionDePostulantes/CU3_Gestiona
 const DocumentosPage = lazy(() => import('./P2_GestionDePostulantes/Pendientes/pages/DocumentosPage'));
 const PagosPage = lazy(() => import('./P2_GestionDePostulantes/Pendientes/pages/PagosPage'));
 const InicioPostulantePage = lazy(() => import('./P2_GestionDePostulantes/CU2_RegistrarPostulante/pages/InicioPostulantePage'));
+const MiGrupoPage = lazy(() => import('./P2_GestionDePostulantes/Pendientes/pages/MiGrupoPage'));
+const PostulantePerfilPage = lazy(() => import('./P2_GestionDePostulantes/Pendientes/pages/PostulantePerfilPage'));
 
 // P3
 const GestionAcademicaPage = lazy(() => import('./P3_GestionAcademicaBase/Pendientes/pages/GestionAcademicaPage'));
@@ -85,6 +87,8 @@ export default function SeguridadAccesoRoutes() {
           <Route path="/docente/asistencia" element={<DocenteAsistenciaPage />} />
           <Route path="/docente/perfil" element={<DocentePerfilPage />} />
           <Route path="/postulante/dashboard" element={<InicioPostulantePage />} />
+          <Route path="/postulante/mi-grupo" element={<MiGrupoPage />} />
+          <Route path="/postulante/perfil" element={<PostulantePerfilPage />} />
           <Route path="/reportes" element={<ReportesPage />} />
         </Route>
       </Routes>

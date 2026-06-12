@@ -73,7 +73,8 @@ export default function DocenteAsistenciaPage() {
 
     try {
       setLoading(true);
-      const ests = await docentePortalService.getEstudiantesPorGrupo(selectedGroup.id);
+      const data = await docentePortalService.getEstudiantesPorGrupo(selectedGroup.id);
+      const ests = Array.isArray(data) ? data : (data.estudiantes || []);
       setEstudiantes(ests);
       
       // Default a todos presentes

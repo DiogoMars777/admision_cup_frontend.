@@ -88,6 +88,15 @@ const deleteAsistencia = async (asistenciaId) => {
   }
 };
 
+const guardarNotas = async (idGrupoMateria, notasData) => {
+  try {
+    const response = await api.post(`/docente-portal/grupos/${idGrupoMateria}/notas`, { notas: notasData });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const docentePortalService = {
   getDashboardData,
   getEstudiantesPorGrupo,
@@ -96,5 +105,6 @@ export const docentePortalService = {
   createAsistencia,
   getDetalleAsistencia,
   updateAsistencia,
-  deleteAsistencia
+  deleteAsistencia,
+  guardarNotas
 };

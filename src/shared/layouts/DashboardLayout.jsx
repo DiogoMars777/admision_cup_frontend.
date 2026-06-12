@@ -26,7 +26,7 @@ export default function DashboardLayout() {
       if (userRole === 'Docente') {
         navigate('/docente/dashboard', { replace: true });
       } else if (userRole === 'Postulante') {
-        navigate('/postulante/dashboard', { replace: true });
+        navigate('/postulante/mi-grupo', { replace: true });
       }
     }
   }, [userRole, location.pathname, navigate]);
@@ -49,6 +49,7 @@ export default function DashboardLayout() {
   };
 
   const isActive = (path) => location.pathname === path || (path !== '/dashboard' && location.pathname.startsWith(path));
+  const isActiveItem = (item) => isActive(item.path) || (item.extraPaths || []).includes(location.pathname);
 
   const menuItems = userRole === 'Docente' ? [
     { section: 'DOCENTE', items: [
@@ -59,14 +60,10 @@ export default function DashboardLayout() {
       { name: 'Perfil', icon: UserPlus, path: '/docente/perfil' }
     ]}
   ] : userRole === 'Postulante' ? [
-    { section: 'POSTULANTE', items: [
-      { name: 'Inicio', icon: LayoutDashboard, path: '/postulante/dashboard' },
-      { name: 'Mis Documentos', icon: FileCheck, path: '/postulante/documentos' },
-      { name: 'Pagos', icon: CreditCard, path: '/postulante/pagos' },
-      { name: 'Materias', icon: BookOpen, path: '/postulante/materias' },
-      { name: 'Horarios', icon: FileClock, path: '/postulante/horarios' },
-      { name: 'Notas', icon: ClipboardList, path: '/postulante/notas' },
-      { name: 'Perfil', icon: UserPlus, path: '/postulante/perfil' }
+    { section: 'NAVEGACIÓN', items: [
+      { name: 'Panel',    icon: LayoutDashboard, path: '/postulante/dashboard' },
+      { name: 'Grupo',    icon: UsersRound,       path: '/postulante/mi-grupo'  },
+      { name: 'Perfil',   icon: UserPlus,          path: '/postulante/perfil'    }
     ]}
   ] : [
     { section: 'PANEL', items: [{ name: 'Panel', icon: LayoutDashboard, path: '/dashboard' }] },
@@ -122,7 +119,9 @@ export default function DashboardLayout() {
       '/docente/materias': 'Materias Habilitadas',
       '/docente/asistencia': 'Control de Asistencia',
       '/docente/perfil': 'Mi Perfil',
-      '/postulante/dashboard': 'Inicio',
+      '/postulante/dashboard': 'Panel',
+      '/postulante/mi-grupo':  'Grupo',
+      '/postulante/perfil':    'Mi Perfil',
     };
     return pathMap[location.pathname] || 'Panel';
   };
@@ -153,7 +152,7 @@ export default function DashboardLayout() {
             )}
             <ul>
               {group.items.map((item, i) => {
-                const active = isActive(item.path);
+                const active = isActiveItem(item);
                 return (
                   <li key={i}>
                     <Link
