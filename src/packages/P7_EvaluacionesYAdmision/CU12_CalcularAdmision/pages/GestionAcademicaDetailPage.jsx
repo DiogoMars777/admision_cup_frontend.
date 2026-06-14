@@ -8,9 +8,7 @@ import gestionAcademicaService from '../services/gestionAcademicaService';
 import GestionAcademicaDocentesTab from './GestionAcademicaDocentesTab';
 import GestionAcademicaPostulantesTab from './GestionAcademicaPostulantesTab';
 
-const userString = localStorage.getItem('user');
-const user = userString ? JSON.parse(userString) : {};
-const isCoordinador = user?.rol === 'Coordinador';
+const checkIsCoordinador = () => { const userString = localStorage.getItem('user'); const user = userString ? JSON.parse(userString) : {}; return user?.rol === 'Coordinador'; };
 
 export default function GestionAcademicaDetailPage({ gestion, onBack }) {
   const [activeTab, setActiveTab] = useState('Grupos');
@@ -216,7 +214,7 @@ function GruposTab({ gestion }) {
       </div>
 
       {/* Acciones */}
-      {!isCoordinador && (
+      {!checkIsCoordinador() && (
         <div className="flex justify-end gap-3">
           <button 
             onClick={handleSimular}
@@ -415,7 +413,7 @@ function EvaluacionesTab({ gestion }) {
                     />
                   </div>
                 </div>
-                {!isCoordinador && (
+                {!checkIsCoordinador() && (
                   <button
                     onClick={() => handleSaveEvaluacion(eva.nombre_eva, eva.fecha)}
                     className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
@@ -761,7 +759,7 @@ function HorariosTab({ gestion }) {
 
       {/* 3. Botones de acción */}
       <div className="flex flex-wrap items-center gap-3">
-        {!isCoordinador && (
+        {!checkIsCoordinador() && (
           <>
             <button 
               onClick={handleSimular}
@@ -1017,7 +1015,7 @@ function ResumenTab({ gestion }) {
           </p>
         </div>
         
-        {!data.ya_asignados && !isCoordinador && (
+        {!data.ya_asignados && !checkIsCoordinador() && (
           <button 
             onClick={handleAsignar}
             disabled={isAssigning}
@@ -1053,7 +1051,7 @@ function ResumenTab({ gestion }) {
             >
               <Printer className="w-4 h-4" /> PDF
             </button>
-            {!isCoordinador && (
+            {!checkIsCoordinador() && (
               <>
                 <div className="w-px h-6 bg-emerald-200 mx-1"></div>
                 <button 
