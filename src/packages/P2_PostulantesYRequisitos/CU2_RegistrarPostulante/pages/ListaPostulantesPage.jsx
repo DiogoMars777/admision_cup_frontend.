@@ -584,6 +584,42 @@ export default function ListaPostulantesPage() {
                         </p>
                       </li>
                     )}
+
+                    {selectedPostulante.admision_estado && (
+                      <li className={`p-3 rounded-lg mt-4 border shadow-sm ${
+                        selectedPostulante.admision_estado === 'Aprobado' 
+                          ? 'bg-emerald-50 border-emerald-200' 
+                          : selectedPostulante.admision_estado === 'Reprobado' 
+                            ? 'bg-red-50 border-red-200' 
+                            : 'bg-blue-50 border-blue-200'
+                      }`}>
+                        <span className={`text-xs font-bold uppercase mb-1 flex items-center gap-1.5 ${
+                          selectedPostulante.admision_estado === 'Aprobado' 
+                            ? 'text-emerald-800' 
+                            : selectedPostulante.admision_estado === 'Reprobado' 
+                              ? 'text-red-800' 
+                              : 'text-blue-800'
+                        }`}>
+                          Estado de Admisión Oficial
+                        </span>
+                        <p className={`text-base font-black tracking-wide ${
+                          selectedPostulante.admision_estado === 'Aprobado' 
+                            ? 'text-emerald-600' 
+                            : selectedPostulante.admision_estado === 'Reprobado' 
+                              ? 'text-red-600' 
+                              : 'text-blue-600'
+                        }`}>
+                          {selectedPostulante.admision_estado.toUpperCase()}
+                        </p>
+                        
+                        {selectedPostulante.admision_estado === 'Aprobado' && selectedPostulante.admision_carrera && (
+                          <div className="mt-2.5 bg-white px-3 py-2 rounded-md border border-emerald-100 shadow-sm">
+                            <p className="text-[10px] text-gray-500 uppercase font-bold">Carrera Asignada</p>
+                            <p className="text-sm font-bold text-gray-800 mt-0.5">{selectedPostulante.admision_carrera}</p>
+                          </div>
+                        )}
+                      </li>
+                    )}
                   </ul>
                 </div>
               </div>

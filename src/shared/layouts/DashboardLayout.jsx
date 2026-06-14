@@ -79,6 +79,7 @@ export default function DashboardLayout() {
     { section: 'PANEL', items: [{ name: 'Panel', icon: LayoutDashboard, path: '/dashboard' }] },
     { section: 'SEGURIDAD', items: [
       { name: 'Usuarios', icon: Users, path: '/p1/usuarios' },
+      { name: 'Administrativos', icon: ShieldAlert, path: '/p1/administrativos' },
       { name: 'Roles', icon: ShieldAlert, path: '/p1/roles' },
       { name: 'Bitácora', icon: FileClock, path: '/p1/bitacora' }
     ]},
@@ -110,6 +111,7 @@ export default function DashboardLayout() {
     const pathMap = {
       '/dashboard': 'Panel',
       '/p1/usuarios': 'Usuarios',
+      '/p1/administrativos': 'Administrativos',
       '/p1/roles': 'Roles',
       '/p1/bitacora': 'Bitácora',
       '/p2/postulantes': 'Postulantes',

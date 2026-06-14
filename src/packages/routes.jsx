@@ -10,6 +10,7 @@ const VerifyCodePage = lazy(() => import('./P1_SeguridadYAuditoria/CU01_GestionD
 const ResetPasswordPage = lazy(() => import('./P1_SeguridadYAuditoria/CU01_GestionDeUsuariosYAutenticacion/pages/ResetPasswordPage'));
 const UsuariosPage = lazy(() => import('./P1_SeguridadYAuditoria/CU01_GestionDeUsuariosYAutenticacion/pages/UsuariosPage'));
 const RolesPage = lazy(() => import('./P1_SeguridadYAuditoria/CU01_GestionDeUsuariosYAutenticacion/pages/RolesPage'));
+const AdministrativosPage = lazy(() => import('./P1_SeguridadYAuditoria/CU01_GestionDeUsuariosYAutenticacion/pages/AdministrativosPage'));
 const BitacoraPage = lazy(() => import('./P1_SeguridadYAuditoria/CU16_GestionarBitacora/pages/BitacoraPage'));
 const DashboardPage = lazy(() => import('./P1_SeguridadYAuditoria/Dashboard/pages/DashboardPage'));
 
@@ -65,6 +66,7 @@ export default function SeguridadAccesoRoutes() {
           <Route path="/dashboard" element={<DashboardPage />} />
           {/* P1 */}
           <Route path="/p1/usuarios" element={<UsuariosPage />} />
+          <Route path="/p1/administrativos" element={<AdministrativosPage />} />
           <Route path="/p1/roles" element={<RolesPage />} />
           <Route path="/p1/bitacora" element={<BitacoraPage />} />
           {/* P2 */}

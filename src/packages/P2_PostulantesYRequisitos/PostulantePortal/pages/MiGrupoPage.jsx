@@ -320,6 +320,15 @@ export default function MiGrupoPage() {
                 {admision.estado === 'En Proceso' && <Clock className="w-4 h-4" />}
                 {admision.estado.toUpperCase()}
               </div>
+
+              {admision.estado === 'Aprobado' && admision.carrera_asignada && (
+                <div className="mt-4 text-center animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <p className="text-[10px] text-emerald-400/80 uppercase tracking-widest font-bold mb-1">Carrera Asignada</p>
+                  <div className="text-sm font-bold text-white bg-white/5 py-2 px-3 rounded-xl border border-white/10 shadow-sm backdrop-blur-sm">
+                    {admision.carrera_asignada}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
