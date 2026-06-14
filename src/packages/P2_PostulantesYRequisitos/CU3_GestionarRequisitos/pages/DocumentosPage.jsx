@@ -14,6 +14,10 @@ export default function DocumentosPage() {
   const [hasAutoOpened, setHasAutoOpened] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : {};
+  const isCoordinador = user?.rol === 'Coordinador';
+
   const location = useLocation();
   const autoOpenId = location.state?.autoOpenPostulanteId;
 

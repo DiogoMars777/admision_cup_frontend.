@@ -14,6 +14,10 @@ export default function PagosPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPostulante, setSelectedPostulante] = useState(null);
   const [procesandoPago, setProcesandoPago] = useState(false);
+
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : {};
+  const isCoordinador = user?.rol === 'Coordinador';
   
   // Estados para simular Tarjeta de Crédito
   const [cardNumber, setCardNumber] = useState('');
