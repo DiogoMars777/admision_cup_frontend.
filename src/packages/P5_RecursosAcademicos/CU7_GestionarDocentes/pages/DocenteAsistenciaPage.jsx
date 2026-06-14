@@ -28,10 +28,6 @@ export default function DocenteAsistenciaPage() {
     return `${year}-${month}-${day}`;
   };
 
-  useEffect(() => {
-    loadGrupos();
-  }, []);
-
   const loadGrupos = async () => {
     try {
       setLoading(true);
@@ -43,6 +39,10 @@ export default function DocenteAsistenciaPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadGrupos();
+  }, []);
 
   const handleSelectGroup = async (grupo) => {
     setSelectedGroup(grupo);
@@ -75,17 +75,23 @@ export default function DocenteAsistenciaPage() {
     try {
       setLoading(true);
       const data = await docentePortalService.getEstudiantesPorGrupo(selectedGroup.id);
-      const ests = Array.isArray(data) ? data : (data.estudiantes || []);
+      const ests = Array.isArray(data?.estudiantes) ? data.estudiantes : (Array.isArray(data) ? data : []);
       setEstudiantes(ests);
       
       // Default a todos presentes
       const initialState = {};
-      ests.forEach(e => initialState[e.id] = 'Presente');
+      if (Array.isArray(ests)) {
+        ests.forEach(e => {
+          const id = e.id || e.id_postulante;
+          if (id) initialState[id] = 'Presente';
+        });
+      }
       setAttendanceState(initialState);
       
       setCurrentAsistencia(null);
       setView('form');
     } catch (e) {
+      console.error('Error en handleCrearAsistencia:', e);
       toast.error('Error al cargar estudiantes');
     } finally {
       setLoading(false);
@@ -390,16 +396,17 @@ export default function DocenteAsistenciaPage() {
                     <tr><td colSpan="3" className="p-8 text-center text-gray-500">No hay estudiantes en este grupo.</td></tr>
                   ) : (
                     estudiantes.map((e) => {
-                      const id = e.id || e.id_postulante;
+                      if (!e) return null;
+                      const id = e.id || e.id_postulante || Math.random();
                       const status = attendanceState[id];
                       return (
                         <tr key={id} className="hover:bg-blue-50/20 transition-colors">
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
                               <div className="w-8 h-8 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center text-blue-700 font-bold text-xs shadow-sm">
-                                {e.nombre.charAt(0)}
+                                {e.nombre ? e.nombre.charAt(0) : '?'}
                               </div>
-                              <span className="font-semibold text-gray-800">{e.nombre}</span>
+                              <span className="font-semibold text-gray-800">{e.nombre || 'Desconocido'}</span>
                             </div>
                           </td>
                           <td className="px-6 py-4 text-center font-medium text-gray-500">
