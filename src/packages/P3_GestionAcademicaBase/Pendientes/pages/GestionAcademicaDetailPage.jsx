@@ -1030,7 +1030,7 @@ function ResumenTab({ gestion }) {
             <button 
               onClick={handleExportExcel}
               className="flex items-center gap-1.5 px-3 py-1.5 bg-white text-green-700 border border-green-200 hover:bg-green-100 rounded-lg text-sm font-bold transition-colors shadow-sm"
-              title="Descargar Excel"
+              title="Descargar reporte en Excel"
             >
               <Download className="w-4 h-4" /> Excel
             </button>
