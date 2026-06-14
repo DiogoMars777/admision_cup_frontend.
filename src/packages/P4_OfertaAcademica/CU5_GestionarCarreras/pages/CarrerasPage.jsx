@@ -4,6 +4,10 @@ import carreraService from '../services/carreraService';
 import { toast } from 'react-hot-toast';
 
 export default function CarrerasPage() {
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : {};
+  const isCoordinador = user?.rol === 'Coordinador';
+
   const [carreras, setCarreras] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -85,7 +89,8 @@ export default function CarrerasPage() {
           <h2 className="text-2xl font-bold text-gray-800">Gestión de Carreras</h2>
           <p className="text-sm text-gray-500 mt-1">Administra las carreras académicas del sistema</p>
         </div>
-        <button
+        {!isCoordinador && (
+          <button
           onClick={() => {
             setEditingCarrera(null);
             setFormData({ nombre: '', descripcion: '', estado: 'Activo', cupo_max: 50 });
@@ -97,6 +102,7 @@ export default function CarrerasPage() {
           <Plus className="h-5 w-5 mr-2" />
           Nueva Carrera
         </button>
+        )}
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -122,7 +128,7 @@ export default function CarrerasPage() {
                 <th className="px-6 py-4">Cupo Max.</th>
                 <th className="px-6 py-4">Cupo Disp.</th>
                 <th className="px-6 py-4">Estado</th>
-                <th className="px-6 py-4 text-right">Acciones</th>
+                {!isCoordinador && <th className="px-6 py-4 text-right">Acciones</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">

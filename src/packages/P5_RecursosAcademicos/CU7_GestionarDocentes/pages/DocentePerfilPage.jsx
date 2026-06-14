@@ -3,6 +3,7 @@ import { User, Mail, Shield, BookOpen, Clock, Building } from 'lucide-react';
 export default function DocentePerfilPage() {
   const userString = localStorage.getItem('user');
   const user = userString ? JSON.parse(userString) : { nombre: 'Docente Desconocido', email: 'correo@ejemplo.com', rol: 'Docente' };
+  const isCoordinador = user?.rol === 'Coordinador';
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500 pt-6">

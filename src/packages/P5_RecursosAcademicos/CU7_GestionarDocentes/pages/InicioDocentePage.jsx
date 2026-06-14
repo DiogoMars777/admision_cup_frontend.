@@ -12,6 +12,7 @@ export default function InicioDocentePage() {
 
   const userString = localStorage.getItem('user');
   const user = userString ? JSON.parse(userString) : { id: 1, nombre: 'Docente' };
+  const isCoordinador = user?.rol === 'Coordinador';
 
   useEffect(() => {
     loadDashboard();

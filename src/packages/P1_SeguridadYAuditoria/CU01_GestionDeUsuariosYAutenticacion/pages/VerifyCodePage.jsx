@@ -2,6 +2,10 @@ import VerifyCodeForm from '../components/VerifyCodeForm';
 import { ShieldCheck } from 'lucide-react';
 
 export default function VerifyCodePage() {
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : {};
+  const isCoordinador = user?.rol === 'Coordinador';
+
   return (
     <div>
       <div className="flex flex-col items-center mb-6">

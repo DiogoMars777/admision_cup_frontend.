@@ -5,6 +5,10 @@ import { usuarioService } from '../services/usuarioService';
 import { toast } from 'react-hot-toast';
 
 export default function UsuariosPage() {
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : {};
+  const isCoordinador = user?.rol === 'Coordinador';
+
   const [searchTerm, setSearchTerm] = useState('');
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -102,10 +106,12 @@ export default function UsuariosPage() {
           <h2 className="text-2xl font-bold text-gray-800">Gestión de Usuarios</h2>
           <p className="text-sm text-gray-500">Administra los accesos y roles del sistema.</p>
         </div>
-        <button onClick={openCreate} className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg flex items-center shadow-sm transition-colors text-sm font-medium">
-          <Plus className="h-4 w-4 mr-2" />
-          Nuevo Usuario
-        </button>
+        {!isCoordinador && (
+          <button onClick={openCreate} className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg flex items-center shadow-sm transition-colors text-sm font-medium">
+            <Plus className="h-4 w-4 mr-2" />
+            Nuevo Usuario
+          </button>
+        )}
       </div>
 
       {/* Pestañas de filtrado por Rol */}
@@ -163,6 +169,7 @@ export default function UsuariosPage() {
             onToggleStatus={handleToggleStatus}
             onDelete={handleDelete}
             onEdit={openEdit}
+            isCoordinador={isCoordinador}
           />
         )}
       </div>

@@ -1,6 +1,6 @@
 import { MoreVertical, Edit2, Trash2, Shield, ShieldOff } from 'lucide-react';
 
-export default function UsuarioTable({ usuarios, searchTerm, onToggleStatus, onDelete, onEdit }) {
+export default function UsuarioTable({ usuarios, searchTerm, onToggleStatus, onDelete, onEdit, isCoordinador }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-left border-collapse">
@@ -10,7 +10,7 @@ export default function UsuarioTable({ usuarios, searchTerm, onToggleStatus, onD
             <th className="px-6 py-4 font-medium">Documento</th>
             <th className="px-6 py-4 font-medium">Rol</th>
             <th className="px-6 py-4 font-medium">Estado</th>
-            <th className="px-6 py-4 font-medium text-right">Acciones</th>
+            {!isCoordinador && <th className="px-6 py-4 font-medium text-right">Acciones</th>}
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
@@ -41,32 +41,34 @@ export default function UsuarioTable({ usuarios, searchTerm, onToggleStatus, onD
                   {user.estado}
                 </span>
               </td>
-              <td className="px-6 py-4 text-right">
-                <div className="flex justify-end space-x-2">
-                  <button onClick={() => onEdit(user)} className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors" title="Editar">
-                    <Edit2 className="h-4 w-4" />
-                  </button>
-                  <button 
-                    onClick={() => onToggleStatus(user.id)}
-                    className="p-1.5 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-md transition-colors" 
-                    title={user.estado === 'Activo' ? 'Desactivar' : 'Activar'}
-                  >
-                    {user.estado === 'Activo' ? <ShieldOff className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
-                  </button>
-                  <button 
-                    onClick={() => onDelete(user.id)}
-                    className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors" 
-                    title="Eliminar"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
-              </td>
+              {!isCoordinador && (
+                <td className="px-6 py-4 text-right">
+                  <div className="flex justify-end space-x-2">
+                    <button onClick={() => onEdit(user)} className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors" title="Editar">
+                      <Edit2 className="h-4 w-4" />
+                    </button>
+                    <button 
+                      onClick={() => onToggleStatus(user.id)}
+                      className="p-1.5 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-md transition-colors" 
+                      title={user.estado === 'Activo' ? 'Desactivar' : 'Activar'}
+                    >
+                      {user.estado === 'Activo' ? <ShieldOff className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
+                    </button>
+                    <button 
+                      onClick={() => onDelete(user.id)}
+                      className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors" 
+                      title="Eliminar"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </td>
+              )}
             </tr>
           ))}
           {usuarios.length === 0 && (
             <tr>
-              <td colSpan="5" className="px-6 py-8 text-center text-gray-500 text-sm">
+              <td colSpan={isCoordinador ? "4" : "5"} className="px-6 py-8 text-center text-gray-500 text-sm">
                 No se encontraron resultados.
               </td>
             </tr>

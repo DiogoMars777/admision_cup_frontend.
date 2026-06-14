@@ -5,6 +5,10 @@ import gestionAcademicaService from '../services/gestionAcademicaService';
 import GestionAcademicaDetailPage from './GestionAcademicaDetailPage';
 
 export default function GestionAcademicaPage() {
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : {};
+  const isCoordinador = user?.rol === 'Coordinador';
+
   const [gestiones, setGestiones] = useState([]);
   const [cups, setCups] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -135,7 +139,7 @@ export default function GestionAcademicaPage() {
           <h2 className="text-2xl font-bold text-gray-800">Gestiones Académicas</h2>
           <p className="text-sm text-gray-500 mt-1">Administra los periodos académicos del sistema</p>
         </div>
-        {!selectedGestion && (
+        {!selectedGestion && !isCoordinador && (
           <button
             onClick={() => {
               setEditingGestion(null);
@@ -180,7 +184,7 @@ export default function GestionAcademicaPage() {
                 <th className="px-6 py-4">CUP</th>
                 <th className="px-6 py-4">Fechas</th>
                 <th className="px-6 py-4">Estado</th>
-                <th className="px-6 py-4 text-right">Acciones</th>
+                {!isCoordinador && <th className="px-6 py-4 text-right">Acciones</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -220,24 +224,26 @@ export default function GestionAcademicaPage() {
                         {gestion.estado || 'Inactivo'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={(e) => { e.stopPropagation(); handleEdit(gestion); }}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                          title="Editar gestión"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={(e) => { e.stopPropagation(); handleDelete(gestion.id); }}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Eliminar gestión"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
+                    {!isCoordinador && (
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleEdit(gestion); }}
+                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            title="Editar gestión"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleDelete(gestion.id); }}
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Eliminar gestión"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))
               )}

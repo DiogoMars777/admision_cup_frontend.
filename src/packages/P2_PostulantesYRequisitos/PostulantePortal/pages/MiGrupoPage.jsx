@@ -178,6 +178,7 @@ export default function MiGrupoPage() {
 
   const userString = localStorage.getItem('user');
   const user = userString ? JSON.parse(userString) : {};
+  const isCoordinador = user?.rol === 'Coordinador';
   const firstName = (user.nombre || 'Postulante').split(' ')[0];
 
   useEffect(() => {

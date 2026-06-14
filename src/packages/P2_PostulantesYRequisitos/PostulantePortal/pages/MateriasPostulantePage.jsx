@@ -112,6 +112,10 @@ function MateriaRow({ materia, idx, isExpanded, onToggle }) {
 }
 
 export default function MateriasPostulantePage() {
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : {};
+  const isCoordinador = user?.rol === 'Coordinador';
+
   const [materias, setMaterias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

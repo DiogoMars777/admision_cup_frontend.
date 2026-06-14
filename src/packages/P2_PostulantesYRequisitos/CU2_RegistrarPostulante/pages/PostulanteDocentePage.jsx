@@ -5,6 +5,10 @@ import { materiaService } from '../../../P4_OfertaAcademica/CU6_GestionarMateria
 import { toast } from 'react-hot-toast';
 
 export default function PostulanteDocentePage() {
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : {};
+  const isCoordinador = user?.rol === 'Coordinador';
+
   const [searchTerm, setSearchTerm] = useState('');
   const [aspirantes, setAspirantes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -219,7 +223,7 @@ export default function PostulanteDocentePage() {
           <h2 className="text-2xl font-bold text-gray-800">Postulantes Docentes</h2>
           <p className="text-sm text-gray-500">Gestiona a los usuarios registrados como aspirantes a docente.</p>
         </div>
-        {!selectedAspirante && (
+        {!selectedAspirante && !isCoordinador && (
           <button 
             onClick={() => {
               setFormAspirante({ ci: '', nombre: '', email: '', telefono: '', sexo: 'M', grado_academico: '', experiencia: 0 });
@@ -294,7 +298,9 @@ export default function PostulanteDocentePage() {
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end gap-2">
-                            <button 
+                            {!isCoordinador && (
+                              <>
+                                <button
                               onClick={(e) => handleEditClick(e, aspirante)} 
                               className="p-2 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-md transition-colors" 
                               title="Editar"
@@ -308,6 +314,8 @@ export default function PostulanteDocentePage() {
                             >
                               <Trash2 className="h-4 w-4" />
                             </button>
+                              </>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -369,12 +377,14 @@ export default function PostulanteDocentePage() {
                   <h4 className="font-bold text-gray-800">Materias a las que está postulando</h4>
                   <p className="text-sm text-gray-500">Listado de materias en las que el aspirante se ha postulado.</p>
                 </div>
-                <button 
-                  onClick={() => setShowNuevaPostulacion(true)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center shadow-sm transition-colors text-sm font-medium"
-                >
-                  <Plus className="h-4 w-4 mr-2" /> Nueva Postulación
-                </button>
+                {!isCoordinador && (
+                  <button 
+                    onClick={() => setShowNuevaPostulacion(true)}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center shadow-sm transition-colors text-sm font-medium"
+                  >
+                    <Plus className="h-4 w-4 mr-2" /> Nueva Postulación
+                  </button>
+                )}
               </div>
 
               <div className="space-y-3 mb-8">
@@ -422,7 +432,8 @@ export default function PostulanteDocentePage() {
               </div>
 
               {selectedMateria && (() => {
-                const bloqueado = selectedMateria.estado === 'Aprobada' && !editMode;
+                const bloqueado = (selectedMateria.estado === 'Aprobada' || selectedMateria.estado === 'Aprobado') && !editMode;
+                const readOnly = bloqueado || isCoordinador;
 
                 return (
                   <div className="animate-in slide-in-from-top-2 duration-300">
@@ -432,7 +443,7 @@ export default function PostulanteDocentePage() {
                         <p className="text-sm text-gray-500">Revisa los requisitos solicitados para esta materia y cumple con cada uno.</p>
                       </div>
                       <div className="flex items-center gap-2">
-                        {bloqueado && (
+                        {bloqueado && !isCoordinador && (
                           <button
                             onClick={() => setEditMode(true)}
                             className="flex items-center text-amber-700 bg-amber-50 border border-amber-200 px-4 py-2 rounded-lg hover:bg-amber-100 text-sm font-semibold transition-colors"
@@ -444,7 +455,7 @@ export default function PostulanteDocentePage() {
                       </div>
                     </div>
 
-                    {bloqueado && (
+                    {bloqueado && !isCoordinador && (
                       <div className="mb-3 flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-sm text-emerald-800">
                         <Lock className="h-4 w-4 flex-shrink-0" />
                         <p>Todos los requisitos obligatorios están cumplidos. Haz clic en <b>Editar</b> para modificarlos.</p>
@@ -464,7 +475,7 @@ export default function PostulanteDocentePage() {
                           </div>
                         ) : (
                           requisitos.map(req => (
-                            <div key={req.id_materia_requisito} className={`grid grid-cols-1 sm:grid-cols-[1fr_120px_2fr] gap-4 p-4 items-start transition-colors ${bloqueado ? 'bg-gray-50/50' : (req.cumplido ? 'bg-white' : 'bg-red-50/20')}`}>
+                            <div key={req.id_materia_requisito} className={`grid grid-cols-1 sm:grid-cols-[1fr_120px_2fr] gap-4 p-4 items-start transition-colors ${readOnly ? 'bg-gray-50/50' : (req.cumplido ? 'bg-white' : 'bg-red-50/20')}`}>
                               <div className="flex items-center gap-4">
                                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${req.cumplido ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-400'}`}>
                                   <ShieldCheck className="w-5 h-5" />
@@ -486,9 +497,9 @@ export default function PostulanteDocentePage() {
                                       className="sr-only"
                                       checked={!!req.cumplido}
                                       onChange={() => handleToggleRequisito(req.id_materia_requisito, req.cumplido)}
-                                      disabled={bloqueado}
+                                      disabled={readOnly}
                                     />
-                                    <div className={`w-5 h-5 rounded border ${req.cumplido ? 'bg-green-500 border-green-500' : 'border-gray-300 bg-white group-hover:border-gray-400'} flex items-center justify-center transition-colors ${bloqueado ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                                    <div className={`w-5 h-5 rounded border ${req.cumplido ? 'bg-green-500 border-green-500' : 'border-gray-300 bg-white group-hover:border-gray-400'} flex items-center justify-center transition-colors ${readOnly ? 'opacity-50 cursor-not-allowed' : ''}`}>
                                       {req.cumplido && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
                                     </div>
                                   </div>
@@ -501,10 +512,10 @@ export default function PostulanteDocentePage() {
                               <div>
                                 <div className="relative">
                                   <textarea
-                                    className={`w-full h-16 resize-none rounded-lg border border-gray-200 p-3 text-sm transition-colors bg-gray-50 focus:bg-white ${bloqueado ? 'opacity-70 cursor-not-allowed text-gray-500' : 'text-gray-700 focus:ring-primary focus:border-primary'}`}
+                                    className={`w-full h-16 resize-none rounded-lg border border-gray-200 p-3 text-sm transition-colors bg-gray-50 focus:bg-white ${readOnly ? 'opacity-70 cursor-not-allowed text-gray-500' : 'text-gray-700 focus:ring-primary focus:border-primary'}`}
                                     placeholder="Añadir observación..."
                                     maxLength={200}
-                                    disabled={bloqueado}
+                                    disabled={readOnly}
                                   ></textarea>
                                   <span className="absolute bottom-2 right-2 text-[10px] text-gray-400 font-medium">
                                     0/200
@@ -517,7 +528,7 @@ export default function PostulanteDocentePage() {
                       </div>
                     </div>
 
-                    {!bloqueado && (
+                    {!bloqueado && !isCoordinador && (
                         <div className="flex flex-col sm:flex-row items-center justify-end gap-4 p-4 bg-gray-50 border border-gray-100 rounded-xl">
                           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                             <button
@@ -536,14 +547,14 @@ export default function PostulanteDocentePage() {
               })()}
               
               {/* Botón de Aprobación Global del Aspirante */}
-              {materias.length > 0 && materias.some(m => m.estado === 'Aprobada') && selectedAspirante.estado !== 'Docente Oficial' && (
+              {materias.length > 0 && materias.some(m => m.estado === 'Aprobada' || m.estado === 'Aprobado') && selectedAspirante.estado !== 'Docente Oficial' && !isCoordinador && (
                 <div className="mt-8 border border-emerald-200 bg-emerald-50 rounded-xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
                   <div>
                     <h4 className="font-bold text-emerald-900 text-lg flex items-center gap-2">
                       <CheckCircle className="h-5 w-5 text-emerald-600" /> ¡Postulación Lista!
                     </h4>
                     <p className="text-sm text-emerald-800 mt-1">
-                      El aspirante tiene {materias.filter(m => m.estado === 'Aprobada').length} materia(s) con todos los requisitos cumplidos. Se le creará un usuario (contraseña = su carnet) y se le enviará un correo con sus credenciales y materias asignadas.
+                      El aspirante tiene {materias.filter(m => m.estado === 'Aprobada' || m.estado === 'Aprobado').length} materia(s) con todos los requisitos cumplidos. Se le creará un usuario (contraseña = su carnet) y se le enviará un correo con sus credenciales y materias asignadas.
                     </p>
                   </div>
                   <button 

@@ -17,6 +17,7 @@ export default function DocenteAsistenciaPage() {
 
   const userString = localStorage.getItem('user');
   const user = userString ? JSON.parse(userString) : { id: 1 };
+  const isCoordinador = user?.rol === 'Coordinador';
 
   // Helper para obtener la fecha local correcta (Bolivia) en formato YYYY-MM-DD
   const getLocalDateString = () => {
@@ -300,7 +301,7 @@ export default function DocenteAsistenciaPage() {
                     <th className="px-6 py-4 font-bold text-center text-amber-600">Tardes</th>
                     <th className="px-6 py-4 font-bold text-center text-red-600">Faltas</th>
                     <th className="px-6 py-4 font-bold text-center">Estado</th>
-                    <th className="px-6 py-4 font-bold text-right">Acciones</th>
+                    {!isCoordinador && <th className="px-6 py-4 font-bold text-right">Acciones</th>}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
@@ -318,7 +319,8 @@ export default function DocenteAsistenciaPage() {
                           {h.estado}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-right">
+                      {!isCoordinador && (
+                    <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <button onClick={() => handleVerDetalle(h)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Ver detalle">
                             <Eye className="w-5 h-5" />
@@ -331,6 +333,7 @@ export default function DocenteAsistenciaPage() {
                           </button>
                         </div>
                       </td>
+                  )}
                     </tr>
                   ))}
                 </tbody>

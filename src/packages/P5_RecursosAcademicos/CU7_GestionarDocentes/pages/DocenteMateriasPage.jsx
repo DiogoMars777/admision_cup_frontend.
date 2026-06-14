@@ -4,6 +4,10 @@ import { docentePortalService } from '../services/docentePortalService';
 import toast from 'react-hot-toast';
 
 export default function DocenteMateriasPage() {
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : {};
+  const isCoordinador = user?.rol === 'Coordinador';
+
   const [materias, setMaterias] = useState([]);
   const [loading, setLoading] = useState(true);
 

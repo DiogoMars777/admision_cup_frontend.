@@ -193,31 +193,33 @@ export default function PagosPage() {
                           </span>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-right">
-                        {!p.tiene_pago ? (
-                          <button
-                            onClick={() => {
-                              setSelectedPostulante(p);
-                              setCardNumber('');
-                              setExpiry('');
-                              setCvc('');
-                              setCardName('');
-                              setFocus('');
-                              setPaypalStep(1);
-                              setPaypalEmail('');
-                              setPaypalPassword('');
-                              setIsAddingCard(false);
-                              setIsCardSaved(false);
-                            }}
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-lg transition-colors shadow-sm shadow-green-600/20"
-                          >
-                            <CreditCard className="w-4 h-4" />
-                            Registrar Pago
-                          </button>
-                        ) : (
-                          <span className="text-xs text-gray-400 italic">Ya procesado</span>
-                        )}
-                      </td>
+                      {!isCoordinador && (
+                        <td className="px-6 py-4 text-right">
+                          {!p.tiene_pago ? (
+                            <button
+                              onClick={() => {
+                                setSelectedPostulante(p);
+                                setCardNumber('');
+                                setExpiry('');
+                                setCvc('');
+                                setCardName('');
+                                setFocus('');
+                                setPaypalStep(1);
+                                setPaypalEmail('');
+                                setPaypalPassword('');
+                                setIsAddingCard(false);
+                                setIsCardSaved(false);
+                              }}
+                              className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-lg transition-colors shadow-sm shadow-green-600/20"
+                            >
+                              <CreditCard className="w-4 h-4" />
+                              Registrar Pago
+                            </button>
+                          ) : (
+                            <span className="text-xs text-gray-400 italic">Ya procesado</span>
+                          )}
+                        </td>
+                      )}
                     </tr>
                   );
                 })}

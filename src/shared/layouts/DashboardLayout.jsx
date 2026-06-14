@@ -58,6 +58,57 @@ export default function DashboardLayout() {
 
   const hasActiveGestion = user?.has_active_gestion ?? true;
 
+  const isSuperAdmin = userRole === 'Super Admin' || userRole === 'Super Administrador';
+  const isAdmin = userRole === 'Administrador' || userRole === 'Coordinador' || isSuperAdmin;
+  const userPermisos = user?.permisos || [];
+
+  const adminMenuItems = [
+    ...(isSuperAdmin || userPermisos.includes('panel') ? [{
+      section: 'PANEL', items: [{ name: 'Panel', icon: LayoutDashboard, path: '/dashboard' }]
+    }] : []),
+    ...(isSuperAdmin || userPermisos.includes('seguridad_usuarios') || userPermisos.includes('seguridad_administrativos') || userPermisos.includes('seguridad_roles') || userPermisos.includes('seguridad_bitacora') ? [{
+      section: 'SEGURIDAD', items: [
+        ...(isSuperAdmin || userPermisos.includes('seguridad_usuarios') ? [{ name: 'Usuarios', icon: Users, path: '/p1/usuarios' }] : []),
+        ...(isSuperAdmin || userPermisos.includes('seguridad_administrativos') ? [{ name: 'Administrativos', icon: ShieldAlert, path: '/p1/administrativos' }] : []),
+        ...(isSuperAdmin || userPermisos.includes('seguridad_roles') ? [{ name: 'Roles', icon: ShieldAlert, path: '/p1/roles' }] : []),
+        ...(isSuperAdmin || userPermisos.includes('seguridad_bitacora') ? [{ name: 'Bitácora', icon: FileClock, path: '/p1/bitacora' }] : [])
+      ]
+    }] : []),
+    ...(isSuperAdmin || userPermisos.includes('postulantes_lista') || userPermisos.includes('postulantes_docente') || userPermisos.includes('postulantes_requisitos') || userPermisos.includes('postulantes_documentos') || userPermisos.includes('postulantes_pagos') ? [{
+      section: 'POSTULANTES', items: [
+        ...(isSuperAdmin || userPermisos.includes('postulantes_lista') ? [{ name: 'Postulantes', icon: UserPlus, path: '/p2/postulantes' }] : []),
+        ...(isSuperAdmin || userPermisos.includes('postulantes_docente') ? [{ name: 'Postulante Docente', icon: GraduationCap, path: '/p2/postulante-docente' }] : []),
+        ...(isSuperAdmin || userPermisos.includes('postulantes_requisitos') ? [{ name: 'Requisitos', icon: ClipboardList, path: '/p2/requisitos' }] : []),
+        ...(isSuperAdmin || userPermisos.includes('postulantes_documentos') ? [{ name: 'Documentos', icon: FileCheck, path: '/p2/documentos' }] : []),
+        ...(isSuperAdmin || userPermisos.includes('postulantes_pagos') ? [{ name: 'Pagos', icon: CreditCard, path: '/p2/pagos' }] : [])
+      ]
+    }] : []),
+    ...(isSuperAdmin || userPermisos.includes('academico_gestiones') || userPermisos.includes('academico_carreras') || userPermisos.includes('academico_materias') || userPermisos.includes('academico_docentes') ? [{
+      section: 'ACADÉMICO', items: [
+        ...(isSuperAdmin || userPermisos.includes('academico_gestiones') ? [{ name: 'Gestiones Académicas', icon: Calendar, path: '/p3/gestiones-academicas' }] : []),
+        ...(isSuperAdmin || userPermisos.includes('academico_carreras') ? [{ name: 'Carreras', icon: BookOpen, path: '/p3/carreras' }] : []),
+        ...(isSuperAdmin || userPermisos.includes('academico_materias') ? [{ name: 'Materias', icon: BookOpen, path: '/p3/materias' }] : []),
+        ...(isSuperAdmin || userPermisos.includes('academico_docentes') ? [{ name: 'Docentes', icon: GraduationCap, path: '/p3/docentes' }] : [])
+      ]
+    }] : []),
+    ...(isSuperAdmin || userPermisos.includes('planificacion_grupos') || userPermisos.includes('planificacion_aulas') ? [{
+      section: 'PLANIFICACIÓN', items: [
+        ...(isSuperAdmin || userPermisos.includes('planificacion_grupos') ? [{ name: 'Grupos', icon: UsersRound, path: '/p3/grupos' }] : []),
+        ...(isSuperAdmin || userPermisos.includes('planificacion_aulas') ? [{ name: 'Aulas', icon: School, path: '/p3/aulas' }] : [])
+      ]
+    }] : []),
+    ...(isSuperAdmin || userPermisos.includes('herramientas_carga') ? [{
+      section: 'HERRAMIENTAS', items: [
+        { name: 'Carga Masiva', icon: FileCheck, path: '/p3/carga-masiva' }
+      ]
+    }] : []),
+    ...(isSuperAdmin || userPermisos.includes('herramientas_reportes') ? [{
+      section: 'INTELIGENCIA ARTIFICIAL', items: [
+        { name: 'Reportes IA', icon: PieChart, path: '/reportes' }
+      ]
+    }] : [])
+  ];
+
   const menuItems = userRole === 'Docente' ? [
     { section: 'DOCENTE', items: hasActiveGestion ? [
       { name: 'Inicio', icon: LayoutDashboard, path: '/docente/dashboard' },
@@ -75,36 +126,7 @@ export default function DashboardLayout() {
       { name: 'Grupo',    icon: UsersRound,       path: '/postulante/mi-grupo'  },
       { name: 'Perfil',   icon: UserPlus,          path: '/postulante/perfil'    }
     ]}
-  ] : [
-    { section: 'PANEL', items: [{ name: 'Panel', icon: LayoutDashboard, path: '/dashboard' }] },
-    { section: 'SEGURIDAD', items: [
-      { name: 'Usuarios', icon: Users, path: '/p1/usuarios' },
-      { name: 'Administrativos', icon: ShieldAlert, path: '/p1/administrativos' },
-      { name: 'Roles', icon: ShieldAlert, path: '/p1/roles' },
-      { name: 'Bitácora', icon: FileClock, path: '/p1/bitacora' }
-    ]},
-    { section: 'POSTULANTES', items: [
-      { name: 'Postulantes', icon: UserPlus, path: '/p2/postulantes' },
-      { name: 'Postulante Docente', icon: GraduationCap, path: '/p2/postulante-docente' },
-      { name: 'Requisitos', icon: ClipboardList, path: '/p2/requisitos' },
-      { name: 'Documentos', icon: FileCheck, path: '/p2/documentos' },
-      { name: 'Pagos', icon: CreditCard, path: '/p2/pagos' }
-    ]},
-    { section: 'ACADÉMICO', items: [
-      { name: 'Gestiones Académicas', icon: Calendar, path: '/p3/gestiones-academicas' },
-      { name: 'Carreras', icon: BookOpen, path: '/p3/carreras' },
-      { name: 'Materias', icon: BookOpen, path: '/p3/materias' },
-      { name: 'Docentes', icon: GraduationCap, path: '/p3/docentes' },
-      { name: 'Grupos', icon: UsersRound, path: '/p3/grupos' },
-      { name: 'Aulas', icon: School, path: '/p3/aulas' }
-    ]},
-    { section: 'HERRAMIENTAS', items: [
-      { name: 'Carga Masiva', icon: FileCheck, path: '/p3/carga-masiva' }
-    ]},
-    { section: 'INTELIGENCIA ARTIFICIAL', items: [
-      { name: 'Reportes IA', icon: PieChart, path: '/reportes' }
-    ]}
-  ];
+  ] : adminMenuItems;
 
   // Breadcrumb generation
   const getBreadcrumbs = () => {

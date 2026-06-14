@@ -4,6 +4,10 @@ import { rolService } from '../services/rolService';
 import { toast } from 'react-hot-toast';
 
 export default function RolesPage() {
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : {};
+  const isCoordinador = user?.rol === 'Coordinador';
+
   const [items, setItems] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
@@ -73,9 +77,11 @@ export default function RolesPage() {
           <h2 className="text-2xl font-bold text-gray-800">Gestión de Roles</h2>
           <p className="text-sm text-gray-500">Administra los roles de usuario y sus descripciones.</p>
         </div>
-        <button onClick={openCreate} className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg flex items-center shadow-sm transition-colors text-sm font-medium">
+        {!isCoordinador && (
+          <button onClick={openCreate} className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg flex items-center shadow-sm transition-colors text-sm font-medium">
           <Plus className="h-4 w-4 mr-2" /> Nuevo Rol
         </button>
+        )}
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -103,7 +109,7 @@ export default function RolesPage() {
                 <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider border-b border-gray-200">
                   <th className="px-6 py-4 font-medium">Nombre del Rol</th>
                   <th className="px-6 py-4 font-medium">Descripción</th>
-                  <th className="px-6 py-4 font-medium text-right">Acciones</th>
+                  {!isCoordinador && <th className="px-6 py-4 font-medium text-right">Acciones</th>}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -115,7 +121,7 @@ export default function RolesPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600">{item.descripcion || '-'}</td>
-                    <td className="px-6 py-4 text-right">
+                    {!isCoordinador && (<td className="px-6 py-4 text-right">
                       <div className="flex justify-end space-x-2">
                         <button onClick={() => openEdit(item)} className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors" title="Editar">
                           <Edit2 className="h-4 w-4" />
@@ -124,11 +130,11 @@ export default function RolesPage() {
                           <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
-                    </td>
+                    </td>)}
                   </tr>
                 ))}
                 {items.length === 0 && (
-                  <tr><td colSpan="3" className="px-6 py-8 text-center text-gray-500 text-sm">Sin registros.</td></tr>
+                  <tr><td colSpan={isCoordinador ? "2" : "3"} className="px-6 py-8 text-center text-gray-500 text-sm">Sin registros.</td></tr>
                 )}
               </tbody>
             </table>

@@ -5,6 +5,10 @@ import { postulanteService } from '../services/postulanteService';
 import { toast } from 'react-hot-toast';
 
 export default function ListaPostulantesPage() {
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : {};
+  const isCoordinador = user?.rol === 'Coordinador';
+
   const [searchTerm, setSearchTerm] = useState('');
   const [postulantes, setPostulantes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -115,13 +119,15 @@ export default function ListaPostulantesPage() {
           <h2 className="text-2xl font-bold text-gray-800">Gestión de Postulantes</h2>
           <p className="text-sm text-gray-500">Lista completa de estudiantes postulados al sistema.</p>
         </div>
-        <button 
-          onClick={openCreate}
-          className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg flex items-center shadow-sm transition-colors text-sm font-medium"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Registrar Postulante
-        </button>
+        {!isCoordinador && (
+          <button 
+            onClick={openCreate}
+            className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg flex items-center shadow-sm transition-colors text-sm font-medium"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Registrar Postulante
+          </button>
+        )}
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -152,7 +158,7 @@ export default function ListaPostulantesPage() {
                   <th className="px-6 py-4 font-medium">Contacto</th>
                   <th className="px-6 py-4 font-medium">Correo</th>
                   <th className="px-6 py-4 font-medium">Colegio</th>
-                  <th className="px-6 py-4 font-medium text-right">Acciones</th>
+                  {!isCoordinador && <th className="px-6 py-4 font-medium text-right">Acciones</th>}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -174,19 +180,23 @@ export default function ListaPostulantesPage() {
                     <td className="px-6 py-4 text-sm text-gray-600">
                       {postulante.colegio || 'No especificado'}
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    {!isCoordinador && (<td className="px-6 py-4 text-right">
                       <div className="flex justify-end space-x-2">
                         <button onClick={() => openDetails(postulante)} className="p-1.5 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-md transition-colors" title="Ver Detalles">
                           <Eye className="h-4 w-4" />
                         </button>
-                        <button onClick={() => openEdit(postulante)} className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors" title="Editar">
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        <button onClick={() => handleDelete(postulante.id)} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors" title="Eliminar">
-                          <Trash2 className="h-4 w-4" />
-                        </button>
+                        {!isCoordinador && (
+                          <>
+                            <button onClick={() => openEdit(postulante)} className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors" title="Editar">
+                              <Edit className="h-4 w-4" />
+                            </button>
+                            <button onClick={() => handleDelete(postulante.id)} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors" title="Eliminar">
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </>
+                        )}
                       </div>
-                    </td>
+                    </td>)}
                   </tr>
                 ))}
                 {postulantes.length === 0 && (

@@ -5,6 +5,7 @@ export default function PostulantePerfilPage() {
   const user = userString
     ? JSON.parse(userString)
     : { nombre: 'Postulante', email: 'correo@ejemplo.com', rol: 'Postulante' };
+  const isCoordinador = user?.rol === 'Coordinador';
 
   const initial = (user.nombre || 'P').charAt(0).toUpperCase();
 

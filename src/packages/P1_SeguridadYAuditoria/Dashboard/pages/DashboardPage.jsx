@@ -14,6 +14,7 @@ export default function DashboardPage() {
   const [recentLogs, setRecentLogs] = useState([]);
   const userString = localStorage.getItem('user');
   const user = userString ? JSON.parse(userString) : {};
+  const isCoordinador = user?.rol === 'Coordinador';
   const userName = user?.nombre || 'Usuario';
   const userFirstName = userName.split(' ')[0];
 
@@ -61,6 +62,29 @@ export default function DashboardPage() {
       default: return 'bg-gray-50 text-gray-600';
     }
   };
+
+  const userPermisos = user?.permisos || [];
+  const userRole = user?.rol || 'Administrador';
+  const isSuperAdmin = userRole === 'Super Admin' || userRole === 'Super Administrador';
+  const hasPanelAccess = isSuperAdmin || userPermisos.includes('panel');
+
+  if (userRole === 'Administrador' || userRole === 'Coordinador') {
+    if (!hasPanelAccess) {
+      return (
+        <div className="flex flex-col items-center justify-center h-[70vh] text-center">
+          <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 max-w-md w-full">
+            <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Activity className="w-8 h-8" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-800 mb-2">Bienvenido, {userFirstName}</h2>
+            <p className="text-sm text-gray-500">
+              Tu cuenta está activa, pero no tienes permisos para ver el resumen general del sistema. Usa el menú lateral para navegar a los módulos que tienes asignados.
+            </p>
+          </div>
+        </div>
+      );
+    }
+  }
 
   return (
     <div className="space-y-6">

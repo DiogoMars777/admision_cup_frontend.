@@ -4,6 +4,10 @@ import { materiaService } from '../services/materiaService';
 import { toast } from 'react-hot-toast';
 
 export default function MateriasPage() {
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : {};
+  const isCoordinador = user?.rol === 'Coordinador';
+
   const [items, setItems] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
@@ -44,9 +48,11 @@ export default function MateriasPage() {
           <h2 className="text-2xl font-bold text-gray-800">Gestión de Materias</h2>
           <p className="text-sm text-gray-500">Administra las materias del sistema académico.</p>
         </div>
-        <button onClick={openCreate} className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg flex items-center shadow-sm transition-colors text-sm font-medium">
+        {!isCoordinador && (
+          <button onClick={openCreate} className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg flex items-center shadow-sm transition-colors text-sm font-medium">
           <Plus className="h-4 w-4 mr-2" /> Nueva Materia
         </button>
+        )}
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -60,7 +66,7 @@ export default function MateriasPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead><tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider border-b border-gray-200">
-                <th className="px-6 py-4 font-medium">Nombre</th><th className="px-6 py-4 font-medium">Descripción</th><th className="px-6 py-4 font-medium">Estado</th><th className="px-6 py-4 font-medium text-right">Acciones</th>
+                <th className="px-6 py-4 font-medium">Nombre</th><th className="px-6 py-4 font-medium">Descripción</th><th className="px-6 py-4 font-medium">Estado</th>{!isCoordinador && <th className="px-6 py-4 font-medium text-right">Acciones</th>}
               </tr></thead>
               <tbody className="divide-y divide-gray-100">
                 {items.map(item => (
@@ -68,12 +74,12 @@ export default function MateriasPage() {
                     <td className="px-6 py-4 text-sm font-semibold text-gray-800">{item.nombre}</td>
                     <td className="px-6 py-4 text-sm text-gray-500 truncate max-w-xs">{item.descripcion || '-'}</td>
                     <td className="px-6 py-4"><span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${item.estado === 'Activo' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-red-50 text-red-700 border-red-100'}`}>{item.estado}</span></td>
-                    <td className="px-6 py-4 text-right">
+                    {!isCoordinador && (<td className="px-6 py-4 text-right">
                       <div className="flex justify-end space-x-2">
                         <button onClick={() => openEdit(item)} className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"><Edit2 className="h-4 w-4" /></button>
                         <button onClick={() => handleDelete(item.id)} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"><Trash2 className="h-4 w-4" /></button>
                       </div>
-                    </td>
+                    </td>)}
                   </tr>
                 ))}
                 {items.length === 0 && <tr><td colSpan="4" className="px-6 py-8 text-center text-gray-500 text-sm">Sin registros.</td></tr>}

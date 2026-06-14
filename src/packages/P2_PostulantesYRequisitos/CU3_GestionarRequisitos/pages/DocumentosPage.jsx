@@ -428,28 +428,32 @@ export default function DocumentosPage() {
 
               <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                 {!isEditing ? (
-                  <button
-                    onClick={() => setIsEditing(true)}
-                    className="w-full sm:w-auto px-6 py-2.5 text-sm font-bold text-primary border border-primary rounded-xl hover:bg-primary/5 transition-colors flex items-center justify-center gap-2"
-                  >
-                    <Edit className="w-4 h-4" />
-                    Editar Validación
-                  </button>
+                  !isCoordinador && (
+                    <button
+                      onClick={() => setIsEditing(true)}
+                      className="w-full sm:w-auto px-6 py-2.5 text-sm font-bold text-primary border border-primary rounded-xl hover:bg-primary/5 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <Edit className="w-4 h-4" />
+                      Editar Validación
+                    </button>
+                  )
                 ) : (
                   <>
-                    <button
-                      onClick={() => handleSave(false)}
-                      disabled={saving || selectedPostulante.documentos.length === 0}
-                      className="w-full sm:w-auto px-6 py-2.5 text-sm font-bold text-white bg-primary rounded-xl hover:bg-primary-dark transition-colors shadow-sm flex items-center justify-center gap-2 disabled:opacity-50"
-                    >
-                      {saving
-                        ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        : <ShieldCheck className="w-4 h-4" />
-                      }
-                      {saving ? 'Guardando...' : 'Guardar Validación'}
-                    </button>
+                    {!isCoordinador && (
+                      <button
+                        onClick={() => handleSave(false)}
+                        disabled={saving || selectedPostulante.documentos.length === 0}
+                        className="w-full sm:w-auto px-6 py-2.5 text-sm font-bold text-white bg-primary rounded-xl hover:bg-primary-dark transition-colors shadow-sm flex items-center justify-center gap-2 disabled:opacity-50"
+                      >
+                        {saving
+                          ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          : <ShieldCheck className="w-4 h-4" />
+                        }
+                        {saving ? 'Guardando...' : 'Guardar Validación'}
+                      </button>
+                    )}
 
-                    {selectedPostulante.progress.estado !== 'Completo' && (
+                    {!isCoordinador && selectedPostulante.progress.estado !== 'Completo' && (
                       <button
                         onClick={() => handleSave(true)}
                         disabled={saving || selectedPostulante.documentos.length === 0}

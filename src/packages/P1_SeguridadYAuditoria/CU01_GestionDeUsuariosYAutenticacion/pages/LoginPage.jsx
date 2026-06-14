@@ -1,6 +1,10 @@
 import LoginForm from '../components/LoginForm';
 
 export default function LoginPage() {
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : {};
+  const isCoordinador = user?.rol === 'Coordinador';
+
   return (
     <div>
       <div className="mb-6">

@@ -8,6 +8,10 @@ import gestionAcademicaService from '../services/gestionAcademicaService';
 import GestionAcademicaDocentesTab from './GestionAcademicaDocentesTab';
 import GestionAcademicaPostulantesTab from './GestionAcademicaPostulantesTab';
 
+const userString = localStorage.getItem('user');
+const user = userString ? JSON.parse(userString) : {};
+const isCoordinador = user?.rol === 'Coordinador';
+
 export default function GestionAcademicaDetailPage({ gestion, onBack }) {
   const [activeTab, setActiveTab] = useState('Grupos');
 
@@ -212,22 +216,24 @@ function GruposTab({ gestion }) {
       </div>
 
       {/* Acciones */}
-      <div className="flex justify-end gap-3">
-        <button 
-          onClick={handleSimular}
-          disabled={data.total_inscritos === 0 || data.ya_generados || isSimulating}
-          className="flex items-center gap-2 px-4 py-2 bg-white border border-blue-200 text-blue-700 font-semibold rounded-lg hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <Play className="w-4 h-4" /> Simular asignación
-        </button>
-        <button 
-          onClick={handleGenerar}
-          disabled={!simulacion || isGenerating || data.ya_generados}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <Save className="w-4 h-4" /> Generar grupos
-        </button>
-      </div>
+      {!isCoordinador && (
+        <div className="flex justify-end gap-3">
+          <button 
+            onClick={handleSimular}
+            disabled={data.total_inscritos === 0 || data.ya_generados || isSimulating}
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-blue-200 text-blue-700 font-semibold rounded-lg hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Play className="w-4 h-4" /> Simular asignación
+          </button>
+          <button 
+            onClick={handleGenerar}
+            disabled={!simulacion || isGenerating || data.ya_generados}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Save className="w-4 h-4" /> Generar grupos
+          </button>
+        </div>
+      )}
 
       {data.total_inscritos === 0 && (
         <div className="p-4 bg-yellow-50 text-yellow-800 rounded-lg border border-yellow-200 text-sm">
@@ -409,12 +415,14 @@ function EvaluacionesTab({ gestion }) {
                     />
                   </div>
                 </div>
-                <button
-                  onClick={() => handleSaveEvaluacion(eva.nombre_eva, eva.fecha)}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                >
-                  Guardar
-                </button>
+                {!isCoordinador && (
+                  <button
+                    onClick={() => handleSaveEvaluacion(eva.nombre_eva, eva.fecha)}
+                    className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                  >
+                    Guardar
+                  </button>
+                )}
               </div>
             </div>
           ))}
@@ -753,20 +761,24 @@ function HorariosTab({ gestion }) {
 
       {/* 3. Botones de acción */}
       <div className="flex flex-wrap items-center gap-3">
-        <button 
-          onClick={handleSimular}
-          disabled={isSimulating}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 shadow-sm transition-colors"
-        >
-          <Play className="w-4 h-4"/> Simular horarios
-        </button>
-        <button 
-          onClick={handleGenerar}
-          disabled={!simulacion || isGenerating || data.ya_generados}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-700 text-white font-semibold rounded-lg hover:bg-blue-800 shadow-sm transition-colors disabled:opacity-50"
-        >
-          <CheckCircle2 className="w-4 h-4"/> Generar horarios
-        </button>
+        {!isCoordinador && (
+          <>
+            <button 
+              onClick={handleSimular}
+              disabled={isSimulating}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 shadow-sm transition-colors"
+            >
+              <Play className="w-4 h-4"/> Simular horarios
+            </button>
+            <button 
+              onClick={handleGenerar}
+              disabled={!simulacion || isGenerating || data.ya_generados}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-700 text-white font-semibold rounded-lg hover:bg-blue-800 shadow-sm transition-colors disabled:opacity-50"
+            >
+              <CheckCircle2 className="w-4 h-4"/> Generar horarios
+            </button>
+          </>
+        )}
         
         <button 
           onClick={handleExportExcel}
@@ -1005,7 +1017,7 @@ function ResumenTab({ gestion }) {
           </p>
         </div>
         
-        {!data.ya_asignados && (
+        {!data.ya_asignados && !isCoordinador && (
           <button 
             onClick={handleAsignar}
             disabled={isAssigning}
@@ -1041,14 +1053,18 @@ function ResumenTab({ gestion }) {
             >
               <Printer className="w-4 h-4" /> PDF
             </button>
-            <div className="w-px h-6 bg-emerald-200 mx-1"></div>
-            <button 
-              onClick={handleAsignar}
-              disabled={isAssigning}
-              className="text-emerald-700 text-sm font-bold hover:underline flex gap-1 items-center"
-            >
-              Re-calcular
-            </button>
+            {!isCoordinador && (
+              <>
+                <div className="w-px h-6 bg-emerald-200 mx-1"></div>
+                <button 
+                  onClick={handleAsignar}
+                  disabled={isAssigning}
+                  className="text-emerald-700 text-sm font-bold hover:underline flex gap-1 items-center"
+                >
+                  Re-calcular
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}

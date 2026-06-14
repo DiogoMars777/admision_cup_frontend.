@@ -4,6 +4,10 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 
 export default function CargaMasivaPage() {
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : {};
+  const isCoordinador = user?.rol === 'Coordinador';
+
   const [file, setFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);

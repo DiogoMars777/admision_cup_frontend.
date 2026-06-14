@@ -5,6 +5,10 @@ import { materiaService } from '../../../P4_OfertaAcademica/CU6_GestionarMateria
 import { toast } from 'react-hot-toast';
 
 export default function RequisitosPage() {
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : {};
+  const isCoordinador = user?.rol === 'Coordinador';
+
   const [searchTerm, setSearchTerm] = useState('');
   const [catalogo, setCatalogo] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -208,10 +212,12 @@ export default function RequisitosPage() {
           <h2 className="text-2xl font-bold text-gray-800">Catálogo de Requisitos</h2>
           <p className="text-sm text-gray-500">Gestiona los requisitos generales del sistema.</p>
         </div>
-        <button onClick={openCreate} className="bg-primary hover:bg-primary-dark text-white px-5 py-2.5 rounded-xl flex items-center shadow-sm transition-colors text-sm font-bold">
-          <Plus className="h-5 w-5 mr-2" />
-          Nuevo Requisito
-        </button>
+        {!isCoordinador && (
+          <button onClick={openCreate} className="bg-primary hover:bg-primary-dark text-white px-5 py-2.5 rounded-xl flex items-center shadow-sm transition-colors text-sm font-bold">
+            <Plus className="h-5 w-5 mr-2" />
+            Nuevo Requisito
+          </button>
+        )}
       </div>
 
       {/* Top Search Bar */}
@@ -266,7 +272,7 @@ export default function RequisitosPage() {
                     <th className="px-6 py-5">Descripción General</th>
                     <th className="px-6 py-5 text-center">Tipo de Requisito</th>
                     <th className="px-6 py-5 text-center">Estado</th>
-                    <th className="px-6 py-5 text-right">Acciones</th>
+                    {!isCoordinador && <th className="px-6 py-5 text-right">Acciones</th>}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
@@ -285,14 +291,16 @@ export default function RequisitosPage() {
                         {getEstadoBadge(cat.estado)}
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <div className="flex justify-end space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button onClick={() => openEdit(cat)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-transparent hover:border-blue-100" title="Editar">
-                            <Edit className="h-4 w-4" />
-                          </button>
-                          <button onClick={() => handleDelete(cat.id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100" title="Eliminar">
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
+                        {!isCoordinador && (
+                          <div className="flex justify-end space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onClick={() => openEdit(cat)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-transparent hover:border-blue-100" title="Editar">
+                              <Edit className="h-4 w-4" />
+                            </button>
+                            <button onClick={() => handleDelete(cat.id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100" title="Eliminar">
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -411,18 +419,20 @@ export default function RequisitosPage() {
                   <AlertCircle className="w-4 h-4" />
                   Solo se muestran requisitos de tipo "Materia".
                 </div>
-                <button 
-                  onClick={saveAsignacion}
-                  disabled={savingAsignacion}
-                  className="w-full sm:w-auto bg-primary hover:bg-primary-dark text-white px-8 py-2.5 rounded-xl font-bold text-sm transition-colors shadow-sm disabled:opacity-50 flex items-center justify-center gap-2"
-                >
-                  {savingAsignacion ? (
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  ) : (
-                    <Save className="w-4 h-4" />
-                  )}
-                  {savingAsignacion ? 'Guardando...' : 'Guardar asignación'}
-                </button>
+                {!isCoordinador && (
+                  <button 
+                    onClick={saveAsignacion}
+                    disabled={savingAsignacion}
+                    className="w-full sm:w-auto bg-primary hover:bg-primary-dark text-white px-8 py-2.5 rounded-xl font-bold text-sm transition-colors shadow-sm disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {savingAsignacion ? (
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <Save className="w-4 h-4" />
+                    )}
+                    {savingAsignacion ? 'Guardando...' : 'Guardar asignación'}
+                  </button>
+                )}
               </div>
             )}
           </div>

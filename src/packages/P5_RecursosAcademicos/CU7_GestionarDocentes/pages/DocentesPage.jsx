@@ -4,6 +4,10 @@ import { docenteService } from '../services/docenteService';
 import { toast } from 'react-hot-toast';
 
 export default function DocentesPage() {
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : {};
+  const isCoordinador = user?.rol === 'Coordinador';
+
   const [items, setItems] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
@@ -44,9 +48,11 @@ export default function DocentesPage() {
           <h2 className="text-2xl font-bold text-gray-800">Gestión de Docentes</h2>
           <p className="text-sm text-gray-500">Administra el plantel docente del sistema.</p>
         </div>
-        <button onClick={openCreate} className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg flex items-center shadow-sm transition-colors text-sm font-medium">
+        {!isCoordinador && (
+          <button onClick={openCreate} className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg flex items-center shadow-sm transition-colors text-sm font-medium">
           <Plus className="h-4 w-4 mr-2" /> Nuevo Docente
         </button>
+        )}
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -60,7 +66,7 @@ export default function DocentesPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead><tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider border-b border-gray-200">
-                <th className="px-6 py-4 font-medium">Docente</th><th className="px-6 py-4 font-medium">CI</th><th className="px-6 py-4 font-medium">Correo</th><th className="px-6 py-4 font-medium">Teléfono</th><th className="px-6 py-4 font-medium">Grado Académico</th><th className="px-6 py-4 font-medium">Experiencia</th><th className="px-6 py-4 font-medium text-right">Acciones</th>
+                <th className="px-6 py-4 font-medium">Docente</th><th className="px-6 py-4 font-medium">CI</th><th className="px-6 py-4 font-medium">Correo</th><th className="px-6 py-4 font-medium">Teléfono</th><th className="px-6 py-4 font-medium">Grado Académico</th><th className="px-6 py-4 font-medium">Experiencia</th>{!isCoordinador && <th className="px-6 py-4 font-medium text-right">Acciones</th>}
               </tr></thead>
               <tbody className="divide-y divide-gray-100">
                 {items.map(item => (
@@ -76,12 +82,12 @@ export default function DocentesPage() {
                     <td className="px-6 py-4 text-sm text-gray-600">{item.telefono || '-'}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{item.grado_academico || '-'}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{item.experiencia_docente ? `${item.experiencia_docente} años` : '-'}</td>
-                    <td className="px-6 py-4 text-right">
+                    {!isCoordinador && (<td className="px-6 py-4 text-right">
                       <div className="flex justify-end space-x-2">
                         <button onClick={() => openEdit(item)} className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"><Edit2 className="h-4 w-4" /></button>
                         <button onClick={() => handleDelete(item.id)} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"><Trash2 className="h-4 w-4" /></button>
                       </div>
-                    </td>
+                    </td>)}
                   </tr>
                 ))}
                 {items.length === 0 && <tr><td colSpan="7" className="px-6 py-8 text-center text-gray-500 text-sm">Sin registros.</td></tr>}

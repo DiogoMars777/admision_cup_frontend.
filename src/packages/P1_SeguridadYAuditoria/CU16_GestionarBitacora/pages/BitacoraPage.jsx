@@ -3,6 +3,10 @@ import { Search, Filter, Activity, Clock, ShieldCheck, Database, LogIn, LogOut, 
 import { bitacoraService } from '../services/bitacoraService';
 
 export default function BitacoraPage() {
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : {};
+  const isCoordinador = user?.rol === 'Coordinador';
+
   const [searchTerm, setSearchTerm] = useState('');
   const [registros, setRegistros] = useState([]);
   const [stats, setStats] = useState({ total_mes: 0, hoy: 0, usuarios_activos: 0 });

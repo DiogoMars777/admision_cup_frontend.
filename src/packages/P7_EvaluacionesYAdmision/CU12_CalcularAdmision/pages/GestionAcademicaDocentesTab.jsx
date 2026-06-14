@@ -7,6 +7,10 @@ const API = 'http://localhost:8000/api';
 const getHeaders = () => ({ Authorization: `Bearer ${localStorage.getItem('token')}` });
 
 export default function GestionAcademicaDocentesTab({ gestionId }) {
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : {};
+  const isCoordinador = user?.rol === 'Coordinador';
+
   const [stats, setStats] = useState({
     total_disponibles: 0,
     docentes_asignados: 0,
@@ -183,130 +187,132 @@ export default function GestionAcademicaDocentesTab({ gestionId }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Formulario y Tabla */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h3 className="text-lg font-bold text-gray-800 mb-1">Asignación de docentes a materias de grupo</h3>
-            <p className="text-sm text-gray-500 mb-6">Asigne docentes a materias ya programadas dentro de la gestión académica seleccionada.</p>
+      {!isCoordinador && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          {/* Formulario y Tabla */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <h3 className="text-lg font-bold text-gray-800 mb-1">Asignación de docentes a materias de grupo</h3>
+              <p className="text-sm text-gray-500 mb-6">Asigne docentes a materias ya programadas dentro de la gestión académica seleccionada.</p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Grupo <span className="text-red-500">*</span></label>
-                <select 
-                  className="w-full border-gray-300 rounded-lg px-3 py-2 border text-sm focus:ring-blue-500 focus:border-blue-500"
-                  value={selectedGrupo}
-                  onChange={handleGrupoChange}
-                >
-                  <option value="">Seleccione grupo...</option>
-                  {grupos.map(g => (
-                    <option key={g.id} value={g.id}>{g.nombre} - {g.turno} ({g.modalidad})</option>
-                  ))}
-                </select>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Grupo <span className="text-red-500">*</span></label>
+                  <select 
+                    className="w-full border-gray-300 rounded-lg px-3 py-2 border text-sm focus:ring-blue-500 focus:border-blue-500"
+                    value={selectedGrupo}
+                    onChange={handleGrupoChange}
+                  >
+                    <option value="">Seleccione grupo...</option>
+                    {grupos.map(g => (
+                      <option key={g.id} value={g.id}>{g.nombre} - {g.turno} ({g.modalidad})</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Materia del grupo <span className="text-red-500">*</span></label>
+                  <select 
+                    className="w-full border-gray-300 rounded-lg px-3 py-2 border text-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+                    value={selectedMateria}
+                    onChange={handleMateriaChange}
+                    disabled={!selectedGrupo}
+                  >
+                    <option value="">Seleccione materia...</option>
+                    {materias.map(m => (
+                      <option key={m.id_grupo_materia} value={m.id_grupo_materia}>
+                        {m.nombre} {m.id_docente ? '(Ya tiene docente)' : ''}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Materia del grupo <span className="text-red-500">*</span></label>
-                <select 
-                  className="w-full border-gray-300 rounded-lg px-3 py-2 border text-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-                  value={selectedMateria}
-                  onChange={handleMateriaChange}
-                  disabled={!selectedGrupo}
-                >
-                  <option value="">Seleccione materia...</option>
-                  {materias.map(m => (
-                    <option key={m.id_grupo_materia} value={m.id_grupo_materia}>
-                      {m.nombre} {m.id_docente ? '(Ya tiene docente)' : ''}
-                    </option>
-                  ))}
-                </select>
+
+              {/* Programación configurada */}
+              <div className="bg-blue-50/50 rounded-xl border border-blue-100 p-4 mb-4">
+                <p className="text-xs font-bold text-blue-800 uppercase tracking-wider mb-3">Información de la programación (configurada)</p>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-white p-1.5 rounded text-blue-600 shadow-sm border border-blue-100"><MapPin className="w-4 h-4"/></div>
+                    <div>
+                      <p className="text-[10px] text-gray-500 font-semibold uppercase">Aula</p>
+                      <p className="text-sm font-medium text-gray-800">{horarioInfo?.nro_aula || '--'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <div className="bg-white p-1.5 rounded text-blue-600 shadow-sm border border-blue-100"><CalendarDays className="w-4 h-4"/></div>
+                    <div>
+                      <p className="text-[10px] text-gray-500 font-semibold uppercase">Día</p>
+                      <p className="text-sm font-medium text-gray-800">{horarioInfo?.dia || '--'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <div className="bg-white p-1.5 rounded text-blue-600 shadow-sm border border-blue-100"><Clock className="w-4 h-4"/></div>
+                    <div>
+                      <p className="text-[10px] text-gray-500 font-semibold uppercase">Hora</p>
+                      <p className="text-sm font-medium text-gray-800">{horarioInfo?.hora || '--'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <div className="bg-white p-1.5 rounded text-blue-600 shadow-sm border border-blue-100"><ShieldCheck className="w-4 h-4"/></div>
+                    <div>
+                      <p className="text-[10px] text-gray-500 font-semibold uppercase">Modalidad</p>
+                      <p className="text-sm font-medium text-gray-800">{horarioInfo?.modalidad || '--'}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col md:flex-row md:items-end gap-4">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Docente habilitado <span className="text-red-500">*</span></label>
+                  <select 
+                    className="w-full border-gray-300 rounded-lg px-3 py-2 border text-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+                    value={selectedDocente}
+                    onChange={e => setSelectedDocente(e.target.value)}
+                    disabled={!selectedMateria}
+                  >
+                    <option value="">Seleccione docente...</option>
+                    {docentes.map(d => (
+                      <option key={d.id} value={d.id}>{d.nombre}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleAsignacionAutomatica}
+                    disabled={isAutoAssigning || procesando}
+                    className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-300 text-white font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center h-10 shadow-sm"
+                    title="Asignar automáticamente todos los docentes posibles a las materias pendientes"
+                  >
+                    {isAutoAssigning ? 'Procesando...' : 'Asignación Automática'}
+                  </button>
+                  <button
+                    onClick={handleAsignar}
+                    disabled={!selectedDocente || procesando || isAutoAssigning}
+                    className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-bold py-2 px-6 rounded-lg transition-colors flex items-center justify-center h-10 shadow-sm"
+                  >
+                    {procesando ? 'Asignando...' : 'Asignar docente'}
+                  </button>
+                </div>
               </div>
             </div>
+          </div>
 
-            {/* Programación configurada */}
-            <div className="bg-blue-50/50 rounded-xl border border-blue-100 p-4 mb-4">
-              <p className="text-xs font-bold text-blue-800 uppercase tracking-wider mb-3">Información de la programación (configurada)</p>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="flex items-start gap-2">
-                  <div className="bg-white p-1.5 rounded text-blue-600 shadow-sm border border-blue-100"><MapPin className="w-4 h-4"/></div>
-                  <div>
-                    <p className="text-[10px] text-gray-500 font-semibold uppercase">Aula</p>
-                    <p className="text-sm font-medium text-gray-800">{horarioInfo?.nro_aula || '--'}</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2">
-                  <div className="bg-white p-1.5 rounded text-blue-600 shadow-sm border border-blue-100"><CalendarDays className="w-4 h-4"/></div>
-                  <div>
-                    <p className="text-[10px] text-gray-500 font-semibold uppercase">Día</p>
-                    <p className="text-sm font-medium text-gray-800">{horarioInfo?.dia || '--'}</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2">
-                  <div className="bg-white p-1.5 rounded text-blue-600 shadow-sm border border-blue-100"><Clock className="w-4 h-4"/></div>
-                  <div>
-                    <p className="text-[10px] text-gray-500 font-semibold uppercase">Hora</p>
-                    <p className="text-sm font-medium text-gray-800">{horarioInfo?.hora || '--'}</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2">
-                  <div className="bg-white p-1.5 rounded text-blue-600 shadow-sm border border-blue-100"><ShieldCheck className="w-4 h-4"/></div>
-                  <div>
-                    <p className="text-[10px] text-gray-500 font-semibold uppercase">Modalidad</p>
-                    <p className="text-sm font-medium text-gray-800">{horarioInfo?.modalidad || '--'}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col md:flex-row md:items-end gap-4">
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Docente habilitado <span className="text-red-500">*</span></label>
-                <select 
-                  className="w-full border-gray-300 rounded-lg px-3 py-2 border text-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-                  value={selectedDocente}
-                  onChange={e => setSelectedDocente(e.target.value)}
-                  disabled={!selectedMateria}
-                >
-                  <option value="">Seleccione docente...</option>
-                  {docentes.map(d => (
-                    <option key={d.id} value={d.id}>{d.nombre}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={handleAsignacionAutomatica}
-                  disabled={isAutoAssigning || procesando}
-                  className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-300 text-white font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center h-10 shadow-sm"
-                  title="Asignar automáticamente todos los docentes posibles a las materias pendientes"
-                >
-                  {isAutoAssigning ? 'Procesando...' : 'Asignación Automática'}
-                </button>
-                <button
-                  onClick={handleAsignar}
-                  disabled={!selectedDocente || procesando || isAutoAssigning}
-                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-bold py-2 px-6 rounded-lg transition-colors flex items-center justify-center h-10 shadow-sm"
-                >
-                  {procesando ? 'Asignando...' : 'Asignar docente'}
-                </button>
+          {/* Paneles Informativos Laterales (Información) */}
+          <div className="space-y-4">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+              <h3 className="flex items-center gap-2 font-bold text-blue-700 mb-3">
+                <Info className="w-5 h-5" /> Información
+              </h3>
+              <div className="space-y-3 text-sm text-gray-600">
+                <p>Primero seleccione el grupo y luego la materia del grupo.</p>
+                <p>La información de aula, día, hora y modalidad se muestra automáticamente porque ya está configurada.</p>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Paneles Informativos Laterales (Información) */}
-        <div className="space-y-4">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-            <h3 className="flex items-center gap-2 font-bold text-blue-700 mb-3">
-              <Info className="w-5 h-5" /> Información
-            </h3>
-            <div className="space-y-3 text-sm text-gray-600">
-              <p>Primero seleccione el grupo y luego la materia del grupo.</p>
-              <p>La información de aula, día, hora y modalidad se muestra automáticamente porque ya está configurada.</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      )}
 
       {/* Asignaciones actuales a ancho completo */}
 
@@ -326,7 +332,7 @@ export default function GestionAcademicaDocentesTab({ gestionId }) {
                     <th className="px-4 py-3">Hora</th>
                     <th className="px-4 py-3">Modalidad</th>
                     <th className="px-4 py-3">Estado</th>
-                    <th className="px-4 py-3 text-center">Acciones</th>
+                    {!isCoordinador && <th className="px-4 py-3 text-center">Acciones</th>}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 text-sm">
@@ -345,26 +351,28 @@ export default function GestionAcademicaDocentesTab({ gestionId }) {
                             Activo
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-center flex justify-center gap-2">
-                          <button 
-                            title="Editar asignación" 
-                            className="p-1.5 text-blue-600 hover:bg-blue-50 rounded"
-                            onClick={() => {
-                              setSelectedGrupo('');
-                              setSelectedMateria('');
-                              toast('Para editar, seleccione el grupo y materia en el formulario superior', { icon: 'ℹ️' });
-                            }}
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </button>
-                          <button 
-                            title="Quitar asignación" 
-                            className="p-1.5 text-red-600 hover:bg-red-50 rounded"
-                            onClick={() => handleEliminar(a.id_grupo_materia)}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </td>
+                        {!isCoordinador && (
+                          <td className="px-4 py-3 text-center flex justify-center gap-2">
+                            <button 
+                              title="Editar asignación" 
+                              className="p-1.5 text-blue-600 hover:bg-blue-50 rounded"
+                              onClick={() => {
+                                setSelectedGrupo('');
+                                setSelectedMateria('');
+                                toast('Para editar, seleccione el grupo y materia en el formulario superior', { icon: 'ℹ️' });
+                              }}
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button 
+                              title="Quitar asignación" 
+                              className="p-1.5 text-red-600 hover:bg-red-50 rounded"
+                              onClick={() => handleEliminar(a.id_grupo_materia)}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </td>
+                        )}
                       </tr>
                     ))
                   ) : (

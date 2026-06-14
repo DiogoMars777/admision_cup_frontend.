@@ -2,6 +2,10 @@ import ResetPasswordForm from '../components/ResetPasswordForm';
 import { LockKeyhole } from 'lucide-react';
 
 export default function ResetPasswordPage() {
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : {};
+  const isCoordinador = user?.rol === 'Coordinador';
+
   return (
     <div>
       <div className="flex flex-col items-center mb-6">

@@ -4,6 +4,10 @@ import { aulaService } from '../services/aulaService';
 import { toast } from 'react-hot-toast';
 
 export default function AulasPage() {
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : {};
+  const isCoordinador = user?.rol === 'Coordinador';
+
   const [items, setItems] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
@@ -44,9 +48,11 @@ export default function AulasPage() {
           <h2 className="text-2xl font-bold text-gray-800">Gestión de Aulas</h2>
           <p className="text-sm text-gray-500">Administra la infraestructura física del sistema.</p>
         </div>
-        <button onClick={openCreate} className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg flex items-center shadow-sm transition-colors text-sm font-medium">
+        {!isCoordinador && (
+          <button onClick={openCreate} className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg flex items-center shadow-sm transition-colors text-sm font-medium">
           <Plus className="h-4 w-4 mr-2" /> Nueva Aula
         </button>
+        )}
       </div>
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="p-5 border-b border-gray-100">
@@ -62,7 +68,7 @@ export default function AulasPage() {
                 <th className="px-6 py-4 font-medium">Código Aula</th>
                 <th className="px-6 py-4 font-medium">Capacidad</th>
                 <th className="px-6 py-4 font-medium">Tipo de Aula</th>
-                <th className="px-6 py-4 font-medium text-right">Acciones</th>
+                {!isCoordinador && <th className="px-6 py-4 font-medium text-right">Acciones</th>}
               </tr></thead>
               <tbody className="divide-y divide-gray-100">
                 {items.map(item => (
@@ -70,12 +76,12 @@ export default function AulasPage() {
                     <td className="px-6 py-4 font-semibold text-gray-800">{item.aula_nro}</td>
                     <td className="px-6 py-4 text-gray-600">{item.capacidad} personas</td>
                     <td className="px-6 py-4 text-gray-600">{item.tipo_aula || '-'}</td>
-                    <td className="px-6 py-4 text-right">
+                    {!isCoordinador && (<td className="px-6 py-4 text-right">
                       <div className="flex justify-end space-x-2">
                         <button onClick={() => openEdit(item)} className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-md"><Edit2 className="h-4 w-4" /></button>
                         <button onClick={() => handleDelete(item.id)} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md"><Trash2 className="h-4 w-4" /></button>
                       </div>
-                    </td>
+                    </td>)}
                   </tr>
                 ))}
                 {items.length === 0 && <tr><td colSpan="4" className="px-6 py-8 text-center text-gray-500 text-sm">Sin registros.</td></tr>}
