@@ -66,7 +66,7 @@ export default function CargaMasivaPage() {
     try {
       setIsDownloading(true);
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/api/carga-masiva/plantilla-notas`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:8000/api'}/carga-masiva/plantilla-notas`, {
         headers: {
           'Authorization': `Bearer ${token}`
         },

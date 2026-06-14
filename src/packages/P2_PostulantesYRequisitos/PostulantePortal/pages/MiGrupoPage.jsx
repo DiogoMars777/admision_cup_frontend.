@@ -5,7 +5,7 @@ import {
   ChevronUp
 } from 'lucide-react';
 
-const API_BASE = 'http://localhost:8000/api';
+const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8000/api');
 
 const MATERIA_COLORS = [
   { badge: 'bg-blue-600',    light: 'bg-blue-50',    text: 'text-blue-700',    icon: 'text-blue-500',    evalBg: 'bg-blue-50/70'   },

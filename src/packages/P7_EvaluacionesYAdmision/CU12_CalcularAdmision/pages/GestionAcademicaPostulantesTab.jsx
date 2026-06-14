@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Users, Mail, Phone, Hash, ChevronDown, ChevronUp, Edit3, X, Check } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const API = import.meta.env.VITE_API_URL || (import.meta.env.VITE_API_URL || 'http://localhost:8000/api');
 const getHeaders = () => ({ Authorization: `Bearer ${localStorage.getItem('token')}` });
 
 export default function GestionAcademicaPostulantesTab({ gestionId }) {

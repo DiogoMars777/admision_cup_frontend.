@@ -3,7 +3,7 @@ import { Users, UserCheck, UsersRound, BookOpen, Clock, CalendarDays, CheckCircl
 import { toast } from 'react-hot-toast';
 import axios from 'axios';
 
-const API = 'http://localhost:8000/api';
+const API = (import.meta.env.VITE_API_URL || 'http://localhost:8000/api');
 const getHeaders = () => ({ Authorization: `Bearer ${localStorage.getItem('token')}` });
 
 export default function GestionAcademicaDocentesTab({ gestionId }) {

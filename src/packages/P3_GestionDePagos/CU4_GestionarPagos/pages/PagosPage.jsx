@@ -5,7 +5,7 @@ import axios from 'axios';
 import Cards from 'react-credit-cards-2';
 import 'react-credit-cards-2/dist/es/styles-compiled.css';
 
-const API = 'http://localhost:8000/api';
+const API = (import.meta.env.VITE_API_URL || 'http://localhost:8000/api');
 const getHeaders = () => ({ Authorization: `Bearer ${localStorage.getItem('token')}` });
 
 export default function PagosPage() {
