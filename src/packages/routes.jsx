@@ -4,43 +4,43 @@ import AuthLayout from '../shared/layouts/AuthLayout';
 import DashboardLayout from '../shared/layouts/DashboardLayout';
 
 // P1
-const LoginPage = lazy(() => import('./P1_GestionDeSeguridadYAcceso/CU01_GestionDeUsuariosYAutenticacion/pages/LoginPage'));
-const ForgotPasswordPage = lazy(() => import('./P1_GestionDeSeguridadYAcceso/CU01_GestionDeUsuariosYAutenticacion/pages/ForgotPasswordPage'));
-const VerifyCodePage = lazy(() => import('./P1_GestionDeSeguridadYAcceso/CU01_GestionDeUsuariosYAutenticacion/pages/VerifyCodePage'));
-const ResetPasswordPage = lazy(() => import('./P1_GestionDeSeguridadYAcceso/CU01_GestionDeUsuariosYAutenticacion/pages/ResetPasswordPage'));
-const UsuariosPage = lazy(() => import('./P1_GestionDeSeguridadYAcceso/CU01_GestionDeUsuariosYAutenticacion/pages/UsuariosPage'));
-const RolesPage = lazy(() => import('./P1_GestionDeSeguridadYAcceso/CU01_GestionDeUsuariosYAutenticacion/pages/RolesPage'));
-const BitacoraPage = lazy(() => import('./P1_GestionDeSeguridadYAcceso/CU16_GestionarBitacora/pages/BitacoraPage'));
-const DashboardPage = lazy(() => import('./P1_GestionDeSeguridadYAcceso/Pendientes/pages/DashboardPage'));
+const LoginPage = lazy(() => import('./P1_SeguridadYAuditoria/CU01_GestionDeUsuariosYAutenticacion/pages/LoginPage'));
+const ForgotPasswordPage = lazy(() => import('./P1_SeguridadYAuditoria/CU01_GestionDeUsuariosYAutenticacion/pages/ForgotPasswordPage'));
+const VerifyCodePage = lazy(() => import('./P1_SeguridadYAuditoria/CU01_GestionDeUsuariosYAutenticacion/pages/VerifyCodePage'));
+const ResetPasswordPage = lazy(() => import('./P1_SeguridadYAuditoria/CU01_GestionDeUsuariosYAutenticacion/pages/ResetPasswordPage'));
+const UsuariosPage = lazy(() => import('./P1_SeguridadYAuditoria/CU01_GestionDeUsuariosYAutenticacion/pages/UsuariosPage'));
+const RolesPage = lazy(() => import('./P1_SeguridadYAuditoria/CU01_GestionDeUsuariosYAutenticacion/pages/RolesPage'));
+const BitacoraPage = lazy(() => import('./P1_SeguridadYAuditoria/CU16_GestionarBitacora/pages/BitacoraPage'));
+const DashboardPage = lazy(() => import('./P1_SeguridadYAuditoria/Dashboard/pages/DashboardPage'));
 
 // P2
-const ListaPostulantesPage = lazy(() => import('./P2_GestionDePostulantes/CU2_RegistrarPostulante/pages/ListaPostulantesPage'));
-const PostulanteDocentePage = lazy(() => import('./P2_GestionDePostulantes/CU2_RegistrarPostulante/pages/PostulanteDocentePage'));
-const RequisitosPage = lazy(() => import('./P2_GestionDePostulantes/CU3_GestionarRequisitos/pages/RequisitosPage'));
-const DocumentosPage = lazy(() => import('./P2_GestionDePostulantes/Pendientes/pages/DocumentosPage'));
-const PagosPage = lazy(() => import('./P2_GestionDePostulantes/Pendientes/pages/PagosPage'));
-const InicioPostulantePage = lazy(() => import('./P2_GestionDePostulantes/CU2_RegistrarPostulante/pages/InicioPostulantePage'));
-const MiGrupoPage = lazy(() => import('./P2_GestionDePostulantes/Pendientes/pages/MiGrupoPage'));
-const PostulantePerfilPage = lazy(() => import('./P2_GestionDePostulantes/Pendientes/pages/PostulantePerfilPage'));
+const ListaPostulantesPage = lazy(() => import('./P2_PostulantesYRequisitos/CU2_RegistrarPostulante/pages/ListaPostulantesPage'));
+const PostulanteDocentePage = lazy(() => import('./P2_PostulantesYRequisitos/CU2_RegistrarPostulante/pages/PostulanteDocentePage'));
+const RequisitosPage = lazy(() => import('./P2_PostulantesYRequisitos/CU3_GestionarRequisitos/pages/RequisitosPage'));
+const DocumentosPage = lazy(() => import('./P2_PostulantesYRequisitos/CU3_GestionarRequisitos/pages/DocumentosPage'));
+const PagosPage = lazy(() => import('./P3_GestionDePagos/CU4_GestionarPagos/pages/PagosPage'));
+const InicioPostulantePage = lazy(() => import('./P2_PostulantesYRequisitos/CU2_RegistrarPostulante/pages/InicioPostulantePage'));
+const MiGrupoPage = lazy(() => import('./P2_PostulantesYRequisitos/PostulantePortal/pages/MiGrupoPage'));
+const PostulantePerfilPage = lazy(() => import('./P2_PostulantesYRequisitos/PostulantePortal/pages/PostulantePerfilPage'));
 
 // P3
-const GestionAcademicaPage = lazy(() => import('./P3_GestionAcademicaBase/Pendientes/pages/GestionAcademicaPage'));
-const CarrerasPage = lazy(() => import('./P3_GestionAcademicaBase/Pendientes/pages/CarrerasPage'));
-const MateriasPage = lazy(() => import('./P3_GestionAcademicaBase/CU6_GestionarMaterias/pages/MateriasPage'));
-const DocentesPage = lazy(() => import('./P3_GestionAcademicaBase/CU7_GestionarDocentes/pages/DocentesPage'));
-const GruposPage = lazy(() => import('./P3_GestionAcademicaBase/CU8_GestionarGrupos/pages/GruposPage'));
-const AulasPage = lazy(() => import('./P3_GestionAcademicaBase/CU9_GestionarAulas/pages/AulasPage'));
-const InicioDocentePage = lazy(() => import('./P3_GestionAcademicaBase/CU7_GestionarDocentes/pages/InicioDocentePage'));
-const DocenteMateriasPage = lazy(() => import('./P3_GestionAcademicaBase/CU7_GestionarDocentes/pages/DocenteMateriasPage'));
-const DocenteGruposPage = lazy(() => import('./P3_GestionAcademicaBase/CU7_GestionarDocentes/pages/DocenteGruposPage'));
-const DocentePerfilPage = lazy(() => import('./P3_GestionAcademicaBase/CU7_GestionarDocentes/pages/DocentePerfilPage'));
-const DocenteAsistenciaPage = lazy(() => import('./P3_GestionAcademicaBase/CU7_GestionarDocentes/pages/DocenteAsistenciaPage'));
+const GestionAcademicaPage = lazy(() => import('./P7_EvaluacionesYAdmision/CU12_CalcularAdmision/pages/GestionAcademicaPage'));
+const CarrerasPage = lazy(() => import('./P4_OfertaAcademica/CU5_GestionarCarreras/pages/CarrerasPage'));
+const MateriasPage = lazy(() => import('./P4_OfertaAcademica/CU6_GestionarMaterias/pages/MateriasPage'));
+const DocentesPage = lazy(() => import('./P5_RecursosAcademicos/CU7_GestionarDocentes/pages/DocentesPage'));
+const GruposPage = lazy(() => import('./P6_PlanificacionAcademica/CU8_GestionarGrupos/pages/GruposPage'));
+const AulasPage = lazy(() => import('./P5_RecursosAcademicos/CU9_GestionarAulas/pages/AulasPage'));
+const InicioDocentePage = lazy(() => import('./P5_RecursosAcademicos/CU7_GestionarDocentes/pages/InicioDocentePage'));
+const DocenteMateriasPage = lazy(() => import('./P5_RecursosAcademicos/CU7_GestionarDocentes/pages/DocenteMateriasPage'));
+const DocenteGruposPage = lazy(() => import('./P5_RecursosAcademicos/CU7_GestionarDocentes/pages/DocenteGruposPage'));
+const DocentePerfilPage = lazy(() => import('./P5_RecursosAcademicos/CU7_GestionarDocentes/pages/DocentePerfilPage'));
+const DocenteAsistenciaPage = lazy(() => import('./P5_RecursosAcademicos/CU7_GestionarDocentes/pages/DocenteAsistenciaPage'));
 
 // Herramientas
-const CargaMasivaPage = lazy(() => import('./Herramientas/pages/CargaMasivaPage'));
+const CargaMasivaPage = lazy(() => import('./P8_Reportes/Herramientas/pages/CargaMasivaPage'));
 
 // Inteligencia Artificial
-const ReportesPage = lazy(() => import('./Reportes/pages/ReportesPage'));
+const ReportesPage = lazy(() => import('./P8_Reportes/Reportes/pages/ReportesPage'));
 
 export default function SeguridadAccesoRoutes() {
   const LoadingFallback = () => (

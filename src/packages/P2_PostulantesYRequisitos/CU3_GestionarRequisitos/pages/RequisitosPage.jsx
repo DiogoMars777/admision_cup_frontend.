@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2, BookOpen, User as UserIcon, CheckCircle2, AlertCircle, Save, Filter, ChevronRight } from 'lucide-react';
 import { requisitoService } from '../services/requisitoService';
-import { materiaService } from '../../../P3_GestionAcademicaBase/CU6_GestionarMaterias/services/materiaService';
+import { materiaService } from '../../../P4_OfertaAcademica/CU6_GestionarMaterias/services/materiaService';
 import { toast } from 'react-hot-toast';
 
 export default function RequisitosPage() {

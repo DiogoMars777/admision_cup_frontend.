@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Plus, Search, Filter, Eye, ChevronRight, ArrowLeft, BookOpen, CheckCircle, FileText, Upload, UserPlus, Info, Pencil, Lock, ShieldCheck, CheckCircle2, Trash2 } from 'lucide-react';
 import { aspiranteDocenteService } from '../services/aspiranteDocenteService';
-import { materiaService } from '../../../P3_GestionAcademicaBase/CU6_GestionarMaterias/services/materiaService';
+import { materiaService } from '../../../P4_OfertaAcademica/CU6_GestionarMaterias/services/materiaService';
 import { toast } from 'react-hot-toast';
 
 export default function PostulanteDocentePage() {

@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Users, UserCheck, BookOpen, GraduationCap, UsersRound, School, Activity, ArrowUpRight, Clock } from 'lucide-react';
 import { bitacoraService } from '../../CU16_GestionarBitacora/services/bitacoraService';
-import { postulanteService } from '../../../P2_GestionDePostulantes/CU2_RegistrarPostulante/services/postulanteService';
-import { docenteService } from '../../../P3_GestionAcademicaBase/CU7_GestionarDocentes/services/docenteService';
-import { grupoService } from '../../../P3_GestionAcademicaBase/CU8_GestionarGrupos/services/grupoService';
+import { postulanteService } from '../../../P2_PostulantesYRequisitos/CU2_RegistrarPostulante/services/postulanteService';
+import { docenteService } from '../../../P5_RecursosAcademicos/CU7_GestionarDocentes/services/docenteService';
+import { grupoService } from '../../../P6_PlanificacionAcademica/CU8_GestionarGrupos/services/grupoService';
 
 export default function DashboardPage() {
   const [statsData, setStatsData] = useState({ total_mes: 0, hoy: 0, usuarios_activos: 0 });
